@@ -20,8 +20,8 @@ accepts or rejects each user story in the sprint demos.
 |---|---|
 | GitHub | `aronerh/ideahub-upm` |
 | Supabase | project `ideahub-upm`, ref `dfkofftpkhxwllavpgwh` (eu-west-1). Ignore the other, paused project. |
-| Vercel | team `idea-hub-upm` (`team_Wh6FvgnGQUW98ycVt3RqFzEe`), project `ideahub-upm` (`prj_qXnKwDjwHfnelTybkRULAlcmDuVe`). Live: https://ideahub-upm.vercel.app. Preview URLs need a Vercel login (Standard Protection); the production URL is public. Env vars `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are set for production and preview. |
-| Jira | project `IH` |
+| Vercel | team `idea-hub-upm` (`team_Wh6FvgnGQUW98ycVt3RqFzEe`), project `ideahub-upm` (`prj_qXnKwDjwHfnelTybkRULAlcmDuVe`). Live: https://ideahub-upm.vercel.app. Deployment Protection is off, so every URL (production and PR previews) is public and teammates can review previews without a Vercel account. Functions run in `dub1` (Dublin), next to Supabase. Env vars `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are set for production and preview. |
+| Jira | project `IH` on https://ideahub-upm.atlassian.net |
 
 The Supabase advisor flags `public.rls_auto_enable()` (Supabase's own event trigger for "RLS on by default").
 It's harmless: an event trigger function can't be called through the API.
