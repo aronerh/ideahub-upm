@@ -36,7 +36,7 @@ Epics follow the Lean UX hypotheses: H1 Publishing, H2 Visibility, H3 Feedback.
 |---|---|---|
 | IH-10 | Student submits an idea with a 5-field form (5 pts) | Fields: title (max 80), one-line pitch (max 140), problem, solution, team members. All required; an empty field shows an error and nothing is saved. Only signed-in students can open the form. After submitting, the student lands on the idea's page. |
 | IH-11 | Visitor browses published ideas (3 pts) | List shows title, pitch and date, newest first. Clicking opens the idea page with all 5 fields. Works without signing in. Empty state when there are no ideas. |
-| IH-12 | Student signs up with a UPM email (3 pts) | Only `@alumnos.upm.es` and `@upm.es` addresses; others rejected with a clear message. Sign in and sign out. Visitors can browse but not publish. |
+| IH-12 | Student signs up with a UPM email (3 pts) | Anyone can sign up, but only `@alumnos.upm.es` and `@upm.es` addresses can publish; others rejected when publishing with a clear message. Sign in and sign out. Visitors can browse but not publish. |
 | IH-20 | Experiment story | 5 classmates publish an idea on the live app; time them (goal under 5 min) and ask "Would you use this for your own idea?" |
 | IH-8 / IH-9 | Setup / put the app online | Done when the app runs locally and on Vercel. |
 
