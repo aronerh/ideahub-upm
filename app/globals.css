@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Colors from the team's Lean Canvas deck. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --page: #fbf8f6;
+  --card: #ffffff;
+  --ink: #2b2b2b;
+  --ink-soft: #5c5550;
+  --line: #e7e1dc;
+  --accent: #c2410c;
+  --on-accent: #ffffff;
+  --soft: #fbe3d6;
+  --on-soft: #9a3412;
+  --blob: #f2b89a;
+}
+
+[data-theme="dark"] {
+  --page: #1a1715;
+  --card: #24201d;
+  --ink: #f5efea;
+  --ink-soft: #b8ada5;
+  --line: #3a3430;
+  --accent: #c77b58;
+  --on-accent: #1a1715;
+  --soft: #33231b;
+  --on-soft: #e4b49a;
+  --blob: #9a3412;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-soft: var(--soft);
+  --color-on-soft: var(--on-soft);
+  --color-blob: var(--blob);
+  --font-sans: var(--font-open-sans);
+  --font-heading: var(--font-montserrat);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page);
+  color: var(--ink);
 }
