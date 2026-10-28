@@ -7,5 +7,5 @@ language sql
 immutable
 set search_path = ''
 as $$
-  select coalesce(email ~ '^.+@(alumnos\.upm\.es|upm\.es)$', false);
+  select coalesce(email ~ '^.+@(alumnos\.upm\.es|upm\.es|fi\.upm\.es|dit\.upm\.es)$', false);
 $$;
