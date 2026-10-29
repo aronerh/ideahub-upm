@@ -23,9 +23,6 @@ Stack: [Next.js 16](https://nextjs.org) (App Router, TypeScript, Tailwind), [Sup
 
 The browser tests use the Supabase keys from `.env.local` and never create accounts. The sign-in and sign-out
 test runs only when `E2E_USER_EMAIL` and `E2E_USER_PASSWORD` are set to the shared test account.
-The "new idea appears in the list" test (IH-28) also needs `E2E_WRITE_IDEAS=1` and the two Supabase keys exported in
-the shell (it calls Supabase directly). It publishes a real idea
-with the test account (which needs a UPM email), and ideas can't be deleted yet, so it's off by default and in CI.
 
 Every pull request runs lint, types, unit tests, the database tests in `supabase/tests/` (on an empty Postgres)
 and the browser tests in GitHub Actions (`.github/workflows/ci.yml`).
