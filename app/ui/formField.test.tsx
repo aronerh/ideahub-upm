@@ -23,4 +23,13 @@ describe("FormField", () => {
     render(<FormField name="email" label="Email" />);
     expect(screen.getByLabelText("Email").getAttribute("aria-invalid")).toBe("false");
   });
+
+  it("renders a textarea when multiline", () => {
+    render(<FormField name="problem" label="Problem" multiline required maxLength={2000} />);
+    const textarea = screen.getByLabelText("Problem");
+
+    expect(textarea.tagName).toBe("TEXTAREA");
+    expect(textarea).toHaveProperty("required", true);
+    expect(textarea.getAttribute("maxlength")).toBe("2000");
+  });
 });
