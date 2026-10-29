@@ -4,8 +4,7 @@ import { getCurrentUser } from "@/lib/auth/currentUser";
 
 export async function UserMenu() {
   const user = await getCurrentUser();
-  // Points at the home page until IH-10 adds the idea form.
-  const publishHref = user ? "/" : "/sign-in";
+  const publishHref = user ? "/ideas/new" : "/sign-in";
 
   return (
     <>

@@ -13,6 +13,30 @@ export type Idea = IdeaSummary & {
   team_members: string;
 };
 
+// The 5 fields a student fills in (IH-10).
+export type IdeaInput = Pick<Idea, "title" | "pitch" | "problem" | "solution" | "team_members">;
+
+// Same limits as the check constraints in 002_ideas.sql.
+export const ideaFieldMaxLength: Record<keyof IdeaInput, number> = {
+  title: 80,
+  pitch: 140,
+  problem: 2000,
+  solution: 2000,
+  team_members: 500,
+};
+
+// Reads the 5 fields from the submitted form, without the spaces around them.
+export function readIdeaInput(formData: FormData): IdeaInput {
+  const read = (field: keyof IdeaInput) => String(formData.get(field) ?? "").trim();
+  return {
+    title: read("title"),
+    pitch: read("pitch"),
+    problem: read("problem"),
+    solution: read("solution"),
+    team_members: read("team_members"),
+  };
+}
+
 export const ideaSummaryColumns = "id, title, pitch, created_at";
 export const ideaColumns = "id, title, pitch, problem, solution, team_members, created_at";
 

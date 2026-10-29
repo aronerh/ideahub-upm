@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatIdeaDate, isIdeaId } from "@/lib/ideas/ideas";
+import { formatIdeaDate, isIdeaId, readIdeaInput } from "@/lib/ideas/ideas";
 
 describe("isIdeaId", () => {
   it("accepts a uuid", () => {
@@ -21,5 +21,28 @@ describe("formatIdeaDate", () => {
 
   it("uses Madrid time, so just after midnight there is already the next day", () => {
     expect(formatIdeaDate("2026-10-29T23:30:00Z")).toBe("30 Oct 2026");
+  });
+});
+
+describe("readIdeaInput", () => {
+  it("reads the 5 fields without the spaces around them", () => {
+    const formData = new FormData();
+    formData.set("title", "  Study room finder ");
+    formData.set("pitch", "See which rooms are free.");
+    formData.set("problem", "Rooms are full.\n");
+    formData.set("solution", "A live map.");
+    formData.set("team_members", " Ana, Marco ");
+
+    expect(readIdeaInput(formData)).toEqual({
+      title: "Study room finder",
+      pitch: "See which rooms are free.",
+      problem: "Rooms are full.",
+      solution: "A live map.",
+      team_members: "Ana, Marco",
+    });
+  });
+
+  it("gives empty strings for missing fields", () => {
+    expect(readIdeaInput(new FormData()).title).toBe("");
   });
 });
