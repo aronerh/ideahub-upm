@@ -1,5 +1,5 @@
 -- Fails if public.is_upm_email disagrees with lib/auth/emailDomain.test.ts.
--- CI runs every migration on an empty Postgres first, then this file.
+-- CI runs supabase/tests/setup/ and every migration on an empty Postgres first, then this file.
 do $$
 declare
   sample record;

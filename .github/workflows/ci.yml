@@ -45,9 +45,9 @@ jobs:
       PGPASSWORD: postgres
     steps:
       - uses: actions/checkout@v4
-      - name: Run migrations, then tests
+      - name: Run the Supabase stand-in, migrations, then tests
         run: |
-          for file in supabase/migrations/*.sql supabase/tests/*.sql; do
+          for file in supabase/tests/setup/*.sql supabase/migrations/*.sql supabase/tests/*.sql; do
             echo "Running $file"
             psql -v ON_ERROR_STOP=1 -f "$file"
           done
