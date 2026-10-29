@@ -13,6 +13,20 @@ Stack: [Next.js 16](https://nextjs.org) (App Router, TypeScript, Tailwind), [Sup
    (ask in the group chat, or Supabase: Project Settings → API). Never commit `.env.local`.
 4. `npm run dev` and open http://localhost:3000
 
+## Run the tests
+
+| Command | What |
+|---|---|
+| `npm test` | Unit tests (Vitest), files named `*.test.ts(x)` next to the code |
+| `npm run typecheck` | TypeScript check |
+| `npm run build` then `npm run test:e2e` | Browser tests (Playwright) in `e2e/`, against a production build. Run `npx playwright install chromium` once first. |
+
+The browser tests use the Supabase keys from `.env.local` and never create accounts. The sign-in and sign-out
+test runs only when `E2E_USER_EMAIL` and `E2E_USER_PASSWORD` are set to the shared test account.
+
+Every pull request runs lint, types, unit tests, the database tests in `supabase/tests/` (on an empty Postgres)
+and the browser tests in GitHub Actions (`.github/workflows/ci.yml`).
+
 ## Where things go
 
 | Path | What |
