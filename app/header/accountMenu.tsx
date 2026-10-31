@@ -35,7 +35,7 @@ export function AccountMenu({ email }: { email: string }) {
         aria-label="Account menu"
         className="flex items-center gap-1 text-ink-soft"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-accent bg-soft text-xs font-semibold text-on-soft">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-soft text-xs font-semibold text-on-soft">
           {initials}
         </span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -44,7 +44,7 @@ export function AccountMenu({ email }: { email: string }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-11 z-10 w-56 rounded-xl border border-line bg-card p-1.5 text-sm">
+        <div className="absolute right-0 top-11 z-10 w-56 rounded-xl border border-line bg-card p-1.5 text-sm shadow-lift">
           <div className="mb-1 border-b border-line px-3 py-2">
             <p className="font-medium">Signed in as</p>
             <p className="truncate text-ink-soft">{email}</p>

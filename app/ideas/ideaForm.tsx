@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { type IdeaFormState, publishIdea } from "@/app/ideas/actions";
+import { ArrowIcon } from "@/app/ui/arrowIcon";
 import { FormField } from "@/app/ui/formField";
 import { ideaFieldMaxLength as maxLength } from "@/lib/ideas/ideas";
 
@@ -12,7 +13,7 @@ export function IdeaForm() {
   return (
     <form action={formAction} className="flex flex-col">
       {state.formError && (
-        <p role="alert" className="mt-6 rounded-lg bg-soft px-3 py-2 text-sm text-on-soft">
+        <p role="alert" className="mt-6 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
           {state.formError}
         </p>
       )}
@@ -64,9 +65,10 @@ export function IdeaForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 rounded-lg bg-accent py-2.5 font-heading text-sm font-semibold text-on-accent transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-accent py-2.5 font-heading text-[0.9375rem] font-semibold text-on-accent transition-[opacity,scale] hover:opacity-90 active:scale-[0.99] disabled:opacity-60"
       >
         {pending ? "Publishing…" : "Publish idea"}
+        {!pending && <ArrowIcon className="h-4 w-4" />}
       </button>
     </form>
   );
