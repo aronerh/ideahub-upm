@@ -30,13 +30,13 @@ export function AuthForm({
 
   return (
     <form action={formAction} noValidate className="flex flex-col">
-      <h1 className="font-heading text-2xl font-semibold">{title}</h1>
+      <h1 className="font-heading text-[2.125rem] font-semibold leading-tight tracking-[-0.03em]">{title}</h1>
       {subtitle && <p className="mt-1 text-sm text-ink-soft">{subtitle}</p>}
 
       {state.formError && (
         <p
           role="alert"
-          className="mt-6 rounded-lg bg-soft px-3 py-2 text-sm text-on-soft"
+          className="mt-6 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger"
         >
           {state.formError}
         </p>
@@ -62,7 +62,7 @@ export function AuthForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 rounded-lg bg-accent py-2.5 font-heading text-sm font-semibold text-on-accent transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="mt-6 rounded-lg bg-accent py-2.5 font-heading text-[0.9375rem] font-semibold text-on-accent transition-[opacity,scale] hover:opacity-90 active:scale-[0.99] disabled:opacity-60"
       >
         {pending ? "Sending…" : submitLabel}
       </button>

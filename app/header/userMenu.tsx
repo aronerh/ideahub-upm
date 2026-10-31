@@ -9,15 +9,14 @@ export async function UserMenu() {
   return (
     <>
       {!user && (
-        <Link href="/sign-in" className="whitespace-nowrap text-sm font-medium text-accent hover:underline">
+        <Link href="/sign-in" className="whitespace-nowrap text-sm font-medium text-ink-soft hover:text-ink">
           Sign in
         </Link>
       )}
       <Link
         href={publishHref}
-        className="flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent px-4 py-1.5 font-heading text-xs font-semibold text-on-accent hover:opacity-90"
+        className="whitespace-nowrap rounded-lg bg-accent px-4 py-2 font-heading text-sm font-semibold text-on-accent shadow-glow transition-[opacity,scale] hover:opacity-90 active:scale-[0.98]"
       >
-        <span aria-hidden="true" className="text-base leading-none">+</span>
         Publish<span className="hidden sm:inline"> an idea</span>
       </Link>
       {user && <AccountMenu email={user.email} />}

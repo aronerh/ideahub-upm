@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Montserrat, Open_Sans } from "next/font/google";
+import { Geist } from "next/font/google";
 import { SiteHeader } from "@/app/header/siteHeader";
 import { themeInitScript } from "@/lib/theme";
 import "./globals.css";
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-});
-
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
 });
 
@@ -23,7 +18,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${montserrat.variable} ${openSans.variable} h-full antialiased`}
+      className={`${geist.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
