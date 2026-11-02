@@ -7,8 +7,9 @@ export const allowedEmailDomains = [
   "dit.upm.es",
 ];
 
-export const emailDomainError =
-  "Only UPM emails (@alumnos.upm.es, @upm.es, @fi.upm.es or @dit.upm.es) can publish ideas.";
+export const allowedEmailList = "@alumnos.upm.es, @upm.es, @fi.upm.es or @dit.upm.es";
+
+export const emailDomainError = `Only UPM emails (${allowedEmailList}) can publish ideas.`;
 
 export function isUpmEmail(email: string): boolean {
   const atIndex = email.lastIndexOf("@");

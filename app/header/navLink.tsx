@@ -7,7 +7,7 @@ import { type ReactNode, Suspense } from "react";
 type NavLinkProps = { href: string; children: ReactNode };
 
 const navLinkClass =
-  "flex h-full items-center border-b-2 border-transparent text-sm text-ink-soft hover:text-ink aria-[current=page]:border-accent aria-[current=page]:font-medium aria-[current=page]:text-ink";
+  "rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft hover:text-ink aria-[current=page]:bg-soft aria-[current=page]:text-on-soft";
 
 // usePathname() is only known at request time on dynamic routes like /ideas/[id], so with
 // Cache Components it must sit inside <Suspense>. The fallback is the same link, not highlighted.

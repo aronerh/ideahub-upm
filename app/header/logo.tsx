@@ -1,24 +1,30 @@
+// A hub of connected ideas, with one green node: the new idea joining it.
+export function LogoMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
+      <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+        <path d="M16 16V5M16 16v11M16 16l9.5 5.5M16 16l-9.5 5.5M16 16 6.5 10.5" />
+        <path d="m16 16 9.5-5.5" stroke="var(--accent)" />
+      </g>
+      <g fill="currentColor">
+        <circle cx="16" cy="16" r="3.6" />
+        <circle cx="16" cy="5" r="2.3" />
+        <circle cx="16" cy="27" r="2.3" />
+        <circle cx="25.5" cy="21.5" r="2.3" />
+        <circle cx="6.5" cy="21.5" r="2.3" />
+        <circle cx="6.5" cy="10.5" r="2.3" />
+      </g>
+      <circle cx="25.5" cy="10.5" r="3.4" fill="var(--accent)" />
+    </svg>
+  );
+}
+
 export function Logo() {
   return (
-    <span className="flex items-center gap-2 font-heading text-base font-bold">
-      <span className="flex h-7 w-7 -rotate-6 items-center justify-center rounded-lg bg-accent text-on-accent">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          aria-hidden="true"
-        >
-          <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" />
-        </svg>
-      </span>
+    <span className="flex items-center gap-2 font-heading text-lg font-semibold tracking-tight">
+      <LogoMark className="h-7 w-7" />
       IdeaHub
-      <span className="rounded-full bg-soft px-2 py-0.5 text-[10px] font-semibold tracking-wide text-on-soft">
-        UPM
-      </span>
+      <span className="font-medium text-ink-soft">UPM</span>
     </span>
   );
 }

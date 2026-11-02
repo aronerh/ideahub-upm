@@ -1,0 +1,633 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-31T21:21:25.158Z",
+  "title": "Design System: IdeaHub UPM",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Campus Green",
+        "canonical": "#0f7a5a",
+        "tonalRamp": [
+          "#000f08",
+          "#012d1f",
+          "#034f38",
+          "#047354",
+          "#389674",
+          "#69b798",
+          "#a6d6c1",
+          "#e4f3ec"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "On Accent",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "soft": {
+        "role": "primary",
+        "displayName": "Soft Mint",
+        "canonical": "#e3f3ec",
+        "tonalRamp": [
+          "#070d0a",
+          "#1d2823",
+          "#384540",
+          "#57655f",
+          "#788680",
+          "#9ba9a3",
+          "#c3cbc8",
+          "#ecefee"
+        ]
+      },
+      "on-soft": {
+        "role": "primary",
+        "displayName": "On Soft",
+        "canonical": "#0c6349",
+        "tonalRamp": [
+          "#000f08",
+          "#022d1f",
+          "#014f39",
+          "#217156",
+          "#489377",
+          "#74b59a",
+          "#abd4c2",
+          "#e5f2ec"
+        ]
+      },
+      "glow": {
+        "role": "primary",
+        "displayName": "Green Light",
+        "canonical": "rgb(40 190 140 / 0.22)",
+        "tonalRamp": [
+          "#010f08",
+          "#022d1e",
+          "#014f37",
+          "#027352",
+          "#039a6f",
+          "#48bd91",
+          "#97dabc",
+          "#e0f4ea"
+        ]
+      },
+      "page": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#fafaf8",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#252524",
+          "#424240",
+          "#616160",
+          "#828281",
+          "#a5a5a3",
+          "#c9c9c8",
+          "#eeeeee"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#15181b",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232528",
+          "#3f4246",
+          "#5e6265",
+          "#7f8387",
+          "#a2a5a9",
+          "#c7c9cc",
+          "#eeeeef"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Graphite",
+        "canonical": "#565c64",
+        "tonalRamp": [
+          "#090b0e",
+          "#21252b",
+          "#3d424a",
+          "#5c626a",
+          "#7d838b",
+          "#a0a6ad",
+          "#c5c9cf",
+          "#edeef0"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e5e6e6",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242525",
+          "#414242",
+          "#606161",
+          "#818282",
+          "#a4a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "Error Red",
+        "canonical": "#b42318",
+        "tonalRamp": [
+          "#1e0100",
+          "#4d0100",
+          "#800502",
+          "#b12015",
+          "#da4a3b",
+          "#f97967",
+          "#feb4a7",
+          "#ffe9e5"
+        ]
+      },
+      "danger-soft": {
+        "role": "semantic",
+        "displayName": "Error Wash",
+        "canonical": "#fdecea",
+        "tonalRamp": [
+          "#0f0a09",
+          "#2c2221",
+          "#4c3e3d",
+          "#6c5d5c",
+          "#8d7e7d",
+          "#afa1a0",
+          "#d0c7c5",
+          "#f1eeed"
+        ]
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Campus Green (dark theme)",
+        "canonical": "#3ccb9c",
+        "tonalRamp": [
+          "#000f08",
+          "#012d1f",
+          "#034f39",
+          "#047354",
+          "#049972",
+          "#47bd94",
+          "#97dabe",
+          "#e0f4eb"
+        ]
+      },
+      "on-accent-dark": {
+        "role": "primary",
+        "displayName": "On Accent (dark theme)",
+        "canonical": "#08140f",
+        "tonalRamp": [
+          "#070d0a",
+          "#1d2823",
+          "#38463f",
+          "#57655e",
+          "#77867f",
+          "#9ba9a2",
+          "#c3ccc7",
+          "#ecefee"
+        ]
+      },
+      "soft-dark": {
+        "role": "primary",
+        "displayName": "Soft Mint (dark theme)",
+        "canonical": "#17322a",
+        "tonalRamp": [
+          "#040e0a",
+          "#142a23",
+          "#2d4840",
+          "#4c685f",
+          "#6c8a80",
+          "#91aca3",
+          "#bccec8",
+          "#eaf0ee"
+        ]
+      },
+      "on-soft-dark": {
+        "role": "primary",
+        "displayName": "On Soft (dark theme)",
+        "canonical": "#7be5c0",
+        "tonalRamp": [
+          "#000f09",
+          "#012d20",
+          "#034e3b",
+          "#007357",
+          "#229876",
+          "#5eb99a",
+          "#a0d7c2",
+          "#e2f3ec"
+        ]
+      },
+      "glow-dark": {
+        "role": "primary",
+        "displayName": "Green Light (dark theme)",
+        "canonical": "rgb(60 203 156 / 0.2)",
+        "tonalRamp": [
+          "#000f08",
+          "#012d1f",
+          "#034f39",
+          "#047354",
+          "#049972",
+          "#47bd94",
+          "#97dabe",
+          "#e0f4eb"
+        ]
+      },
+      "page-dark": {
+        "role": "neutral",
+        "displayName": "Warm Paper (dark theme)",
+        "canonical": "#0e1113",
+        "tonalRamp": [
+          "#0a0b0c",
+          "#232527",
+          "#3f4345",
+          "#5e6264",
+          "#7f8386",
+          "#a2a6a8",
+          "#c7c9cb",
+          "#eeeeef"
+        ]
+      },
+      "card-dark": {
+        "role": "neutral",
+        "displayName": "Card White (dark theme)",
+        "canonical": "#171a1d",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232528",
+          "#3f4246",
+          "#5e6265",
+          "#7f8387",
+          "#a2a5a9",
+          "#c7c9cc",
+          "#eeeeef"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Graphite Ink (dark theme)",
+        "canonical": "#f1f2f3",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242526",
+          "#414243",
+          "#606162",
+          "#818283",
+          "#a4a5a6",
+          "#c8c9ca",
+          "#eeeeef"
+        ]
+      },
+      "ink-soft-dark": {
+        "role": "neutral",
+        "displayName": "Soft Graphite (dark theme)",
+        "canonical": "#a3a8b0",
+        "tonalRamp": [
+          "#090b0e",
+          "#22252a",
+          "#3e4249",
+          "#5d6169",
+          "#7e838a",
+          "#a1a5ac",
+          "#c6c9ce",
+          "#edeef0"
+        ]
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Hairline (dark theme)",
+        "canonical": "#272b30",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#22252a",
+          "#3e4248",
+          "#5d6267",
+          "#7e8389",
+          "#a1a5ab",
+          "#c6c9cd",
+          "#edeef0"
+        ]
+      },
+      "danger-dark": {
+        "role": "semantic",
+        "displayName": "Error Red (dark theme)",
+        "canonical": "#f9897f",
+        "tonalRamp": [
+          "#1f0001",
+          "#4d0004",
+          "#7b1315",
+          "#a13a35",
+          "#c75d55",
+          "#e7857c",
+          "#f8b6af",
+          "#ffe9e6"
+        ]
+      },
+      "danger-soft-dark": {
+        "role": "semantic",
+        "displayName": "Error Wash (dark theme)",
+        "canonical": "#3a1b18",
+        "tonalRamp": [
+          "#150706",
+          "#371d1a",
+          "#5a3834",
+          "#7b5752",
+          "#9e7773",
+          "#bf9b97",
+          "#dbc3bf",
+          "#f4eceb"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The home page heading only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles on the idea, publish and auth pages."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Idea card titles and the empty-state heading."
+      },
+      "body-lg": {
+        "displayName": "Body Large",
+        "purpose": "The idea page pitch and the home intro line."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Card pitches and long idea text."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Text inside inputs."
+      },
+      "button-lg": {
+        "displayName": "Button Large",
+        "purpose": "Full-width submit buttons."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Compact primary buttons."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, nav links and secondary buttons."
+      },
+      "body-sm": {
+        "displayName": "Body Small",
+        "purpose": "Supporting lines, alerts and menu rows."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Field errors, character counters and the published date."
+      }
+    },
+    "shadows": [
+      {
+        "name": "rest",
+        "value": "0 1px 2px rgb(15 20 25 / 0.05)",
+        "purpose": "Idea cards and the not-found card at rest."
+      },
+      {
+        "name": "lift",
+        "value": "0 12px 30px var(--glow)",
+        "purpose": "Page-level panels, the open account menu, and an idea card on hover or focus."
+      },
+      {
+        "name": "glow",
+        "value": "0 6px 18px var(--glow)",
+        "purpose": "Under a primary button that invites someone to publish."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-lift",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "The idea card lift and its arrow."
+      },
+      {
+        "name": "duration-lift",
+        "value": "180ms",
+        "purpose": "The idea card lift and its arrow."
+      },
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Button opacity and press scale (Tailwind default)."
+      },
+      {
+        "name": "duration-standard",
+        "value": "150ms",
+        "purpose": "Button opacity and press scale (Tailwind default)."
+      },
+      {
+        "name": "press-scale",
+        "value": "scale(0.98) on compact buttons, scale(0.99) on full-width buttons",
+        "purpose": "Press feedback on primary buttons."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The compact green action. Carries the glow only when it invites someone to publish.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Publish an idea</a>",
+      "css": ".ds-btn-primary { display: inline-block; background: var(--accent); color: var(--on-accent); padding: 8px 16px; border-radius: 8px; font: 600 14px/1.43 var(--font-geist, Geist, sans-serif); text-decoration: none; white-space: nowrap; box-shadow: 0 6px 18px var(--glow); transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), scale 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { opacity: 0.9; } .ds-btn-primary:active { scale: 0.98; } .ds-btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Form Submit Button",
+      "kind": "button",
+      "refersTo": "button-primary-block",
+      "description": "The full-width primary at the end of a form, flat, with an optional arrow.",
+      "html": "<button class=\"ds-btn-block\" type=\"button\">Publish idea <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" width=\"16\" height=\"16\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></button>",
+      "css": ".ds-btn-block { display: flex; width: 100%; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; background: var(--accent); color: var(--on-accent); padding: 10px 0; border-radius: 8px; font: 600 15px/1.5 var(--font-geist, Geist, sans-serif); transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), scale 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-block:hover { opacity: 0.9; } .ds-btn-block:active { scale: 0.99; } .ds-btn-block:disabled { opacity: 0.6; } .ds-btn-block:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The alternative action beside a primary.",
+      "html": "<a class=\"ds-btn-secondary\" href=\"#\">Create account</a>",
+      "css": ".ds-btn-secondary { display: inline-block; background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 10px 16px; border-radius: 8px; font: 500 14px/1.43 var(--font-geist, Geist, sans-serif); text-decoration: none; } .ds-btn-secondary:hover { background: var(--soft); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label, limit counter and a recessed control. Focus turns the border green.",
+      "html": "<div class=\"ds-field\"><div class=\"ds-field-head\"><label class=\"ds-label\" for=\"ds-title\">Title</label><span class=\"ds-count\">18 / 80</span></div><input class=\"ds-input\" id=\"ds-title\" placeholder=\"Study room finder\"></div>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; font-family: var(--font-geist, Geist, sans-serif); } .ds-field-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; } .ds-label { font: 500 14px/1.43 var(--font-geist, Geist, sans-serif); color: var(--ink); } .ds-count { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ink-soft); } .ds-input { background: var(--page); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font: 400 15px/1.5 var(--font-geist, Geist, sans-serif); outline: none; } .ds-input::placeholder { color: var(--ink-soft); } .ds-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 20%, transparent); } .ds-input[aria-invalid=\"true\"] { border-color: var(--danger); }"
+    },
+    {
+      "name": "Navigation Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Header link. The current page sits on Soft Mint.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" aria-current=\"page\" href=\"#\">Explore ideas</a><a class=\"ds-nav-link\" href=\"#\">Sign in</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 8px; } .ds-nav-link { padding: 6px 12px; border-radius: 8px; font: 500 14px/1.43 var(--font-geist, Geist, sans-serif); color: var(--ink-soft); text-decoration: none; } .ds-nav-link:hover { color: var(--ink); } .ds-nav-link[aria-current=\"page\"] { background: var(--soft); color: var(--on-soft); } .ds-nav-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Idea Card",
+      "kind": "card",
+      "refersTo": "idea-card",
+      "description": "The signature: lifts with a green edge and slides its arrow in on hover and keyboard focus.",
+      "html": "<a class=\"ds-idea-card\" href=\"#\"><span class=\"ds-letter-badge\" aria-hidden=\"true\">S</span><div class=\"ds-idea-body\"><h2 class=\"ds-idea-title\">Sample: study room finder</h2><p class=\"ds-idea-pitch\">See which UPM study rooms are free right now.</p><div class=\"ds-idea-foot\"><time class=\"ds-idea-date\">30 Oct 2026</time><span class=\"ds-idea-arrow\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" width=\"18\" height=\"18\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></span></div></div></a>",
+      "css": ".ds-idea-card { display: flex; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--ink); text-decoration: none; font-family: var(--font-geist, Geist, sans-serif); box-shadow: 0 1px 2px rgb(15 20 25 / 0.05); transition: translate 180ms cubic-bezier(.16, 1, .3, 1), box-shadow 180ms cubic-bezier(.16, 1, .3, 1), border-color 180ms cubic-bezier(.16, 1, .3, 1); } .ds-idea-card:hover, .ds-idea-card:focus-visible { translate: 0 -2px; border-color: var(--accent); box-shadow: 0 12px 30px var(--glow); outline: none; } .ds-idea-card:active { translate: 0 0; } .ds-letter-badge { display: flex; flex: none; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: 9999px; background: var(--soft); color: var(--on-soft); font-size: 18px; font-weight: 600; } .ds-idea-body { display: flex; flex: 1; flex-direction: column; min-width: 0; } .ds-idea-title { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.375; letter-spacing: -0.025em; } .ds-idea-pitch { margin: 4px 0 0; flex: 1; color: var(--ink-soft); } .ds-idea-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; } .ds-idea-date { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink-soft); } .ds-idea-arrow { display: flex; color: var(--accent); opacity: 0; transition: opacity 180ms cubic-bezier(.16, 1, .3, 1), translate 180ms cubic-bezier(.16, 1, .3, 1); } .ds-idea-card:hover .ds-idea-arrow, .ds-idea-card:focus-visible .ds-idea-arrow { opacity: 1; translate: 2px 0; } @media (prefers-reduced-motion: reduce) { .ds-idea-card, .ds-idea-arrow { transition: none; } .ds-idea-card:hover, .ds-idea-card:focus-visible { translate: none; } }"
+    },
+    {
+      "name": "Error Alert",
+      "kind": "custom",
+      "refersTo": "alert-error",
+      "description": "Form-level error. The only surface that uses the danger wash.",
+      "html": "<p class=\"ds-alert-error\" role=\"alert\">Use a UPM email address to publish.</p>",
+      "css": ".ds-alert-error { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--danger-soft); color: var(--danger); font: 400 14px/1.43 var(--font-geist, Geist, sans-serif); }"
+    },
+    {
+      "name": "Success Banner",
+      "kind": "custom",
+      "refersTo": "status-banner",
+      "description": "Confirms that an idea is live.",
+      "html": "<p class=\"ds-status\" role=\"status\">Your idea is live. Anyone can read it now.</p>",
+      "css": ".ds-status { margin: 0; padding: 12px 16px; border-radius: 8px; background: var(--soft); color: var(--on-soft); font: 500 14px/1.43 var(--font-geist, Geist, sans-serif); }"
+    },
+    {
+      "name": "Hub Logo",
+      "kind": "custom",
+      "refersTo": "hub-mark",
+      "description": "The hub mark in currentColor with exactly one green spoke and node, beside the wordmark.",
+      "html": "<span class=\"ds-logo\"><svg class=\"ds-logo-mark\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><g stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><path d=\"M16 16V5M16 16v11M16 16l9.5 5.5M16 16l-9.5 5.5M16 16 6.5 10.5\"/><path d=\"m16 16 9.5-5.5\" stroke=\"var(--accent)\"/></g><g fill=\"currentColor\"><circle cx=\"16\" cy=\"16\" r=\"3.6\"/><circle cx=\"16\" cy=\"5\" r=\"2.3\"/><circle cx=\"16\" cy=\"27\" r=\"2.3\"/><circle cx=\"25.5\" cy=\"21.5\" r=\"2.3\"/><circle cx=\"6.5\" cy=\"21.5\" r=\"2.3\"/><circle cx=\"6.5\" cy=\"10.5\" r=\"2.3\"/></g><circle cx=\"25.5\" cy=\"10.5\" r=\"3.4\" fill=\"var(--accent)\"/></svg>IdeaHub <span class=\"ds-logo-upm\">UPM</span></span>",
+      "css": ".ds-logo { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font: 600 18px/1.56 var(--font-geist, Geist, sans-serif); letter-spacing: -0.025em; } .ds-logo-mark { width: 28px; height: 28px; } .ds-logo-upm { font-weight: 500; color: var(--ink-soft); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Graphite Glow",
+    "overview": "IdeaHub UPM is a calm, modern product that lets students' ideas carry the page. Graphite ink sits on warm off-white or near-black neutrals, one green does all the working colour, and a single family, Geist, sets everything. The students' titles and pitches fill the page, and the interface recedes around them.\n\nLife comes from light and motion, not from ornament. A soft green light rises behind the top of every page, shadows are tinted with that same light, and the one expressive gesture in the system is an idea card that lifts with a green edge while its arrow slides in. Everything else is held still.\n\nThe world refuses both the bright playful student look and the flat grey directory. Bright, multi-colour and zine-like directions were rejected as not serious enough for students and investors. Light and dark are equal versions of the same system: the theme follows the system setting, and signed-in users can switch it in the account menu.",
+    "keyCharacteristics": [
+      "Warm neutrals, graphite ink, one green, in matched light and dark token sets.",
+      "Geist alone, with hierarchy from size, weight and tightened tracking.",
+      "Soft green light behind the page top, and shadows that glow rather than darken.",
+      "Hairline-bordered cards with gently rounded corners (6 to 12px) and circular letter badges.",
+      "One signature motion: lift, green edge, arrow, on hover and keyboard focus alike."
+    ],
+    "rules": [
+      {
+        "name": "The One Green Rule",
+        "body": "Green is the only hue with a job. Actions, links, active states, focus and the logo all use it, and no second accent exists.",
+        "section": "colors"
+      },
+      {
+        "name": "The Red Means Error Rule",
+        "body": "The danger tokens exist only for errors: the form-level alert, the invalid field border and the field error message. Sign out is green. Red is never decoration, emphasis or a warning about a choice.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paired Token Rule",
+        "body": "Colour reaches components only through the theme tokens, never as a raw value, and a new token is declared for both themes at once. The favicon is the single exception, because an SVG file cannot read the stylesheet.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Geist sets everything. `font-heading` and `font-sans` are aliases of the same face, and hierarchy comes from size, weight and tracking alone.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tighter When Larger Rule",
+        "body": "Tracking closes as type grows, from -0.025em at title size to -0.04em at display size. Text at reading size keeps its natural spacing.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Headings, labels, buttons and section titles are all written in sentence case. The only capitals set by the system are letter badges and account initials, which are generated content.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Numbers that change or stack, such as card dates and character counters, use tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light Not Ink Rule",
+        "body": "Lift and glow are cast in green light, never in black or grey. Only the Rest shadow is neutral, and it stays at 5%.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Only Cards That Move Rule",
+        "body": "A surface lifts on interaction only if it is a link to an idea. Panels hold their elevation and never react to the pointer.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Invitation Glow Rule",
+        "body": "The glow shadow marks invitations to publish. Submit buttons inside a form and other actions sit flat.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Green Node Rule",
+        "body": "The hub stays monochrome except for that single spoke and node. Never add a second green node, recolour the hub, or use another colour for the node.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do reach colour only through the theme tokens, and declare any new token in both the light and dark sets.",
+      "Do keep green for actions, links, active states, focus and the logo's one node.",
+      "Do reserve the danger tokens for errors, and pair Error Red with a message that says what went wrong.",
+      "Do give every card a 1px hairline border, even when it also has a shadow.",
+      "Do treat hover and keyboard focus the same on idea cards, and remove the movement under reduced motion.",
+      "Do keep a visible focus state on everything interactive: the 2px green outline by default, or the green border treatment on inputs and idea cards.",
+      "Do check new work in both themes and at phone width.",
+      "Do use 12px corners for containers, 8px for controls and 6px for rows nested inside a 12px container."
+    ],
+    "donts": [
+      "Don't introduce a second accent hue, or any bright, multi-colour or zine-like treatment. The team rejected these as not serious enough for students and investors.",
+      "Don't use red for sign out, emphasis or decoration.",
+      "Don't recolour the hub mark or give it more than one green node.",
+      "Don't cast lift or glow shadows in black or grey, and don't use hard offset shadows.",
+      "Don't use a gradient on buttons, cards or text. Gradients exist only as the soft green light behind the page and on the auth panel.",
+      "Don't add a label or eyebrow line above a heading. The one line that sits above a title is the idea's real published date.",
+      "Don't set labels in uppercase with wide tracking.",
+      "Don't add a second typeface, including a mono or a display face.",
+      "Don't make a non-link surface lift on hover.",
+      "Don't set a container corner above 12px; full circles are only for badges, initials, the Check email icon disc and the theme switch."
+    ]
+  }
+}

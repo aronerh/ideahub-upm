@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Link expired · IdeaHub UPM" };
 export default function AuthErrorPage() {
   return (
     <AuthShell tagline="Where UPM ideas meet investors" subline="Publish your idea in under 5 minutes.">
-      <h1 className="font-heading text-2xl font-semibold">That link didn’t work</h1>
+      <h1 className="font-heading text-3xl font-semibold tracking-tight">That link didn’t work</h1>
       <p className="mt-2 text-sm text-ink-soft">
         It may have expired or already been used. If you already confirmed your
         email, sign in. Otherwise, create your account again.

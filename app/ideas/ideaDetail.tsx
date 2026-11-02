@@ -8,20 +8,20 @@ export function IdeaDetail({ idea }: { idea: Idea }) {
   ];
 
   return (
-    <article className="mt-6 rounded-2xl border border-line bg-card p-6 sm:p-10">
+    <article className="mt-6 rounded-xl border border-line bg-card p-6 shadow-lift sm:p-10">
       <time dateTime={idea.created_at} className="text-xs text-ink-soft">
         Published {formatIdeaDate(idea.created_at)}
       </time>
-      <h1 className="mt-2 font-heading text-2xl font-semibold leading-tight break-words sm:text-3xl">
+      <h1 className="mt-2 font-heading text-3xl font-semibold leading-tight tracking-tight break-words sm:text-4xl">
         {idea.title}
       </h1>
       <p className="mt-3 text-lg text-ink-soft break-words">{idea.pitch}</p>
       {sections.map((section) => (
         <section key={section.heading} className="mt-8 border-t border-line pt-6">
-          <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-accent">
+          <h2 className="font-heading text-sm font-semibold text-accent">
             {section.heading}
           </h2>
-          <p className="mt-2 whitespace-pre-line break-words leading-relaxed">{section.body}</p>
+          <p className="mt-2 max-w-prose whitespace-pre-line break-words leading-relaxed">{section.body}</p>
         </section>
       ))}
     </article>
@@ -29,5 +29,5 @@ export function IdeaDetail({ idea }: { idea: Idea }) {
 }
 
 export function IdeaDetailSkeleton() {
-  return <div aria-hidden="true" className="mt-6 h-96 animate-pulse rounded-2xl border border-line bg-card" />;
+  return <div aria-hidden="true" className="mt-6 h-96 animate-pulse rounded-xl border border-line bg-card" />;
 }

@@ -34,5 +34,5 @@ export async function publishIdea(
     return { values, formError: "Your idea couldn't be published. Check every field and try again." };
   }
 
-  redirect(`/ideas/${data.id}`);
+  redirect(`/ideas/${data.id}?published=1`);
 }

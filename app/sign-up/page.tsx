@@ -3,6 +3,7 @@ import Link from "next/link";
 import { signUp } from "@/app/auth/actions";
 import { AuthForm } from "@/app/auth/authForm";
 import { AuthShell } from "@/app/auth/authShell";
+import { allowedEmailList } from "@/lib/auth/emailDomain";
 
 export const metadata: Metadata = { title: "Sign up · IdeaHub UPM" };
 
@@ -15,7 +16,7 @@ export default function SignUpPage() {
       <AuthForm
         action={signUp}
         title="Create your account"
-        subtitle="Use your UPM email to publish ideas."
+        subtitle={`Publishing needs an ${allowedEmailList} email.`}
         submitLabel="Create account"
         passwordAutoComplete="new-password"
         footer={
