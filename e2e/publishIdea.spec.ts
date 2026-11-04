@@ -31,3 +31,32 @@ test("a signed-in student sees the 5-field form", async ({ page }) => {
   }
   await expect(page.getByRole("button", { name: "Publish idea" })).toBeVisible();
 });
+
+// IH-24: an empty form shows a message under every field and stays on the page.
+test("submitting an empty form shows an error for every field and publishes nothing", async ({ page }) => {
+  test.skip(
+    !testUserEmail || !testUserPassword,
+    "Set E2E_USER_EMAIL and E2E_USER_PASSWORD to run this test.",
+  );
+
+  await page.goto("/sign-in");
+  await page.getByLabel("Email").fill(testUserEmail!);
+  await page.getByLabel("Password").fill(testUserPassword!);
+  await page.getByRole("main").getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL("/");
+
+  await page.goto("/ideas/new");
+  await page.getByLabel("Title").fill("   ");
+  await page.getByRole("button", { name: "Publish idea" }).click();
+
+  for (const message of [
+    "Give your idea a title.",
+    "Write a one-line pitch.",
+    "Describe the problem.",
+    "Describe the solution.",
+    "List the team members.",
+  ]) {
+    await expect(page.getByText(message)).toBeVisible();
+  }
+  await expect(page).toHaveURL("/ideas/new");
+});
