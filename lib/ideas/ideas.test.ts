@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { formatIdeaDate, isIdeaId, readIdeaInput } from "@/lib/ideas/ideas";
+import {
+  formatIdeaDate,
+  type IdeaInput,
+  isIdeaId,
+  readIdeaInput,
+  validateIdeaInput,
+} from "@/lib/ideas/ideas";
 
 describe("isIdeaId", () => {
   it("accepts a uuid", () => {
@@ -44,5 +50,58 @@ describe("readIdeaInput", () => {
 
   it("gives empty strings for missing fields", () => {
     expect(readIdeaInput(new FormData()).title).toBe("");
+  });
+});
+
+describe("validateIdeaInput", () => {
+  const validIdea: IdeaInput = {
+    title: "Study room finder",
+    pitch: "See which rooms are free.",
+    problem: "Rooms are full.",
+    solution: "A live map.",
+    team_members: "Ana, Marco",
+  };
+
+  it("accepts an idea with all 5 fields filled in", () => {
+    expect(validateIdeaInput(validIdea)).toBeNull();
+  });
+
+  it("gives every empty field its own message", () => {
+    const empty = { title: "", pitch: "", problem: "", solution: "", team_members: "" };
+    expect(validateIdeaInput(empty)).toEqual({
+      title: "Give your idea a title.",
+      pitch: "Write a one-line pitch.",
+      problem: "Describe the problem.",
+      solution: "Describe the solution.",
+      team_members: "List the team members.",
+    });
+  });
+
+  it("flags only the field that is missing", () => {
+    expect(validateIdeaInput({ ...validIdea, solution: "" })).toEqual({
+      solution: "Describe the solution.",
+    });
+  });
+
+  it("treats a field with only spaces as empty, once read from the form", () => {
+    const formData = new FormData();
+    for (const [field, value] of Object.entries(validIdea)) {
+      formData.set(field, value);
+    }
+    formData.set("title", "   ");
+    expect(validateIdeaInput(readIdeaInput(formData))).toEqual({ title: "Give your idea a title." });
+  });
+
+  it("accepts a title of exactly 80 characters and rejects 81", () => {
+    expect(validateIdeaInput({ ...validIdea, title: "a".repeat(80) })).toBeNull();
+    expect(validateIdeaInput({ ...validIdea, title: "a".repeat(81) })).toEqual({
+      title: "Use at most 80 characters.",
+    });
+  });
+
+  it("rejects a pitch longer than 140 characters", () => {
+    expect(validateIdeaInput({ ...validIdea, pitch: "a".repeat(141) })).toEqual({
+      pitch: "Use at most 140 characters.",
+    });
   });
 });
