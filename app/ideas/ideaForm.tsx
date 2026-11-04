@@ -9,9 +9,10 @@ import { ideaFieldMaxLength as maxLength } from "@/lib/ideas/ideas";
 export function IdeaForm() {
   const [state, formAction, pending] = useActionState<IdeaFormState, FormData>(publishIdea, {});
   const values = state.values;
+  const errors = state.fieldErrors;
 
   return (
-    <form action={formAction} className="flex flex-col">
+    <form action={formAction} noValidate className="flex flex-col">
       {state.formError && (
         <p role="alert" className="mt-6 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
           {state.formError}
@@ -25,6 +26,7 @@ export function IdeaForm() {
         required
         maxLength={maxLength.title}
         defaultValue={values?.title}
+        error={errors?.title}
       />
       <FormField
         name="pitch"
@@ -33,6 +35,7 @@ export function IdeaForm() {
         required
         maxLength={maxLength.pitch}
         defaultValue={values?.pitch}
+        error={errors?.pitch}
       />
       <FormField
         name="problem"
@@ -42,6 +45,7 @@ export function IdeaForm() {
         required
         maxLength={maxLength.problem}
         defaultValue={values?.problem}
+        error={errors?.problem}
       />
       <FormField
         name="solution"
@@ -51,6 +55,7 @@ export function IdeaForm() {
         required
         maxLength={maxLength.solution}
         defaultValue={values?.solution}
+        error={errors?.solution}
       />
       <FormField
         name="team_members"
@@ -60,6 +65,7 @@ export function IdeaForm() {
         required
         maxLength={maxLength.team_members}
         defaultValue={values?.team_members}
+        error={errors?.team_members}
       />
 
       <button

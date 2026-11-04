@@ -3,17 +3,22 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/currentUser";
 import { emailDomainError, isUpmEmail } from "@/lib/auth/emailDomain";
-import { type IdeaInput, readIdeaInput } from "@/lib/ideas/ideas";
+import {
+  type IdeaFieldErrors,
+  type IdeaInput,
+  readIdeaInput,
+  validateIdeaInput,
+} from "@/lib/ideas/ideas";
 import { createClient } from "@/lib/supabase/server";
 
 export type IdeaFormState = {
   values?: IdeaInput;
+  fieldErrors?: IdeaFieldErrors;
   formError?: string;
 };
 
 // IH-10: saves the idea and takes the student to its page.
-// Per-field error messages are IH-24; for now the form relies on required and maxLength,
-// and the database check constraints reject anything that slips through.
+// IH-24: an empty or too long field gets its own message and nothing is saved.
 export async function publishIdea(
   _state: IdeaFormState,
   formData: FormData,
@@ -26,6 +31,11 @@ export async function publishIdea(
   const values = readIdeaInput(formData);
   if (!isUpmEmail(user.email)) {
     return { values, formError: emailDomainError };
+  }
+
+  const fieldErrors = validateIdeaInput(values);
+  if (fieldErrors) {
+    return { values, fieldErrors };
   }
 
   const supabase = await createClient();

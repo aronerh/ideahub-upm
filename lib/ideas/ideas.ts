@@ -37,6 +37,32 @@ export function readIdeaInput(formData: FormData): IdeaInput {
   };
 }
 
+export type IdeaFieldErrors = Partial<Record<keyof IdeaInput, string>>;
+
+// IH-24: what each field says when it's left empty.
+const emptyFieldErrors: Record<keyof IdeaInput, string> = {
+  title: "Give your idea a title.",
+  pitch: "Write a one-line pitch.",
+  problem: "Describe the problem.",
+  solution: "Describe the solution.",
+  team_members: "List the team members.",
+};
+
+// IH-24: checks the 5 fields with the same rules as 002_ideas.sql (not empty, within the limit).
+// Returns null when everything is fine.
+export function validateIdeaInput(values: IdeaInput): IdeaFieldErrors | null {
+  const fieldErrors: IdeaFieldErrors = {};
+  for (const field of Object.keys(emptyFieldErrors) as (keyof IdeaInput)[]) {
+    const value = values[field];
+    if (value === "") {
+      fieldErrors[field] = emptyFieldErrors[field];
+    } else if (value.length > ideaFieldMaxLength[field]) {
+      fieldErrors[field] = `Use at most ${ideaFieldMaxLength[field]} characters.`;
+    }
+  }
+  return Object.keys(fieldErrors).length > 0 ? fieldErrors : null;
+}
+
 export const ideaSummaryColumns = "id, title, pitch, created_at";
 export const ideaColumns = "id, title, pitch, problem, solution, team_members, created_at";
 
