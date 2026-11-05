@@ -1,6 +1,8 @@
 const messagesByCode: Record<string, string> = {
   invalid_credentials: "Wrong email or password.",
-  email_not_confirmed: "Confirm your email first. The link is in your inbox.",
+  email_not_confirmed: "Confirm your email first. Enter the 6-digit code from your inbox.",
+  // Supabase uses this code for a wrong code as well as an expired one.
+  otp_expired: "That code is wrong or has expired. Check it or ask for a new one.",
   user_already_exists: "That email already has an account. Sign in instead.",
   weak_password: "Choose a stronger password.",
   email_address_invalid: "Enter a valid email address.",

@@ -41,7 +41,8 @@ without an account.
   solution (max 2000) and team members (max 500), all required. After publishing, the student lands on the
   idea's page. Ideas can't be edited or deleted yet.
 - Accounts: anyone can sign up with an email and password; only `@alumnos.upm.es`, `@upm.es`, `@fi.upm.es` and
-  `@dit.upm.es` can publish. Email confirmation is off for now; a 6-digit code is planned (IH-33).
+  `@dit.upm.es` can publish. New accounts confirm their email with a 6-digit code typed into the site (IH-33);
+  a link would be used up by email scanners (IH-32).
 - Later backlog, not built: public/private details, sector and stage filters, investor contact, comments, mentor
   ratings, new versions, drafts. No filters, categories, ratings or counts exist yet, so designs must not imply them.
 - The structure of the forms, sign-up, sign-in and the ideas list must stay the same. A redesign changes how they
