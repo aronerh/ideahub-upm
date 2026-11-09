@@ -7,8 +7,6 @@ type FormFieldProps = {
   label: string;
   type?: string;
   autoComplete?: string;
-  // Which keyboard a phone shows, e.g. "numeric" for a code.
-  inputMode?: "numeric";
   placeholder?: string;
   defaultValue?: string;
   error?: string;
