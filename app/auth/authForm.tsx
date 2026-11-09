@@ -2,7 +2,7 @@
 
 import { useActionState, type ReactNode } from "react";
 import type { AuthState } from "@/app/auth/actions";
-import { VerifyCodeForm } from "@/app/auth/verifyCodeForm";
+import { CheckEmail } from "@/app/auth/checkEmail";
 import { FormField } from "@/app/ui/formField";
 
 type AuthFormProps = {
@@ -25,7 +25,7 @@ export function AuthForm({
   const [state, formAction, pending] = useActionState(action, {});
 
   if (state.confirmationSentTo) {
-    return <VerifyCodeForm email={state.confirmationSentTo} />;
+    return <CheckEmail email={state.confirmationSentTo} />;
   }
 
   return (
