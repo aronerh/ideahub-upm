@@ -41,8 +41,9 @@ export async function signUp(
   }
 
   // A session means email confirmation is off, so the user is already signed in.
+  // IH-53: go straight to the publish form, the reason most students sign up.
   if (data.session) {
-    redirect("/");
+    redirect("/ideas/new");
   }
   return { confirmationSentTo: email };
 }
