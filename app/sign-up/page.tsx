@@ -16,7 +16,7 @@ export default function SignUpPage() {
       <AuthForm
         action={signUp}
         title="Create your account"
-        subtitle={`Publishing needs an ${allowedEmailList} email.`}
+        subtitle={`Anyone can browse ideas without an account. To publish your own, sign up with a UPM email: ${allowedEmailList}.`}
         submitLabel="Create account"
         passwordAutoComplete="new-password"
         footer={

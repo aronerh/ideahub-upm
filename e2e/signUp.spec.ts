@@ -5,6 +5,12 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/sign-up");
 });
 
+// IH-54: the UPM rule is explained before anyone signs up with the wrong email.
+test("the page explains that browsing is open and publishing needs a UPM email", async ({ page }) => {
+  await expect(page.getByText(/Anyone can browse ideas without an account/)).toBeVisible();
+  await expect(page.getByText(/sign up with a UPM email: @alumnos\.upm\.es/)).toBeVisible();
+});
+
 test("an empty form asks for an email and a password", async ({ page }) => {
   await page.getByRole("button", { name: "Create account" }).click();
 
