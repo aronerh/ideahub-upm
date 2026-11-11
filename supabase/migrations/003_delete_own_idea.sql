@@ -1,4 +1,3 @@
-
 -- IH-45: Allow students to delete only their own ideas.
 -- The author_id column already identifies the idea owner.
 
