@@ -1,5 +1,7 @@
--- Tests for 002_ideas.sql: who can read and publish ideas, and the field rules.
--- Each test runs in its own transaction and rolls back, so they don't affect each other.
+
+-- Tests for 002_ideas.sql and IH-45:
+-- who can read, publish, and delete ideas, and the field rules.
+-- Each test runs in its own transaction and rolls back.
 
 -- A visitor can read published ideas.
 begin;
@@ -74,15 +76,90 @@ select tests.expect_error($sql$
 $sql$, '42501');
 rollback;
 
--- Published ideas can't be edited or deleted, even by their author.
+
+-- ============================================================
+-- IH-45: TEST 1 - THE OWNER CAN DELETE THEIR OWN IDEA
+-- ============================================================
+
+-- The author can delete their own idea, but cannot edit it yet.
 begin;
-insert into auth.users (id, email) values ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
-insert into public.ideas (author_id, title, pitch, problem, solution, team_members)
-values ('00000000-0000-0000-0000-00000000000a', 'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
-select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
-select tests.expect_rows($sql$ update public.ideas set title = 'Changed' $sql$, 0);
-select tests.expect_rows($sql$ delete from public.ideas $sql$, 0);
+
+insert into auth.users (id, email)
+values ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+
+insert into public.ideas
+  (author_id, title, pitch, problem, solution, team_members)
+values
+  ('00000000-0000-0000-0000-00000000000a',
+   'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+
+select tests.sign_in_as(
+  '00000000-0000-0000-0000-00000000000a',
+  'ana@alumnos.upm.es'
+);
+
+-- Editing is still forbidden until IH-46 is implemented.
+select tests.expect_rows(
+  $sql$ update public.ideas set title = 'Changed' $sql$,
+  0
+);
+
+-- The author can delete their own idea.
+select tests.expect_rows(
+  $sql$ delete from public.ideas $sql$,
+  1
+);
+
 rollback;
+
+
+-- ============================================================
+-- IH-45: TEST 2 - ANOTHER STUDENT CANNOT DELETE THE IDEA
+-- ============================================================
+
+begin;
+
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es'),
+  ('00000000-0000-0000-0000-00000000000b', 'bob@alumnos.upm.es');
+
+-- Ana owns the idea.
+insert into public.ideas
+  (author_id, title, pitch, problem, solution, team_members)
+values
+  ('00000000-0000-0000-0000-00000000000a',
+   'Ana Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+
+-- Bob signs in and attempts to delete Ana's idea.
+select tests.sign_in_as(
+  '00000000-0000-0000-0000-00000000000b',
+  'bob@alumnos.upm.es'
+);
+
+-- Bob must not be able to delete Ana's idea.
+select tests.expect_rows(
+  $sql$
+    delete from public.ideas
+    where author_id = '00000000-0000-0000-0000-00000000000a'
+  $sql$,
+  0
+);
+
+-- Verify that Ana's idea still exists.
+select tests.expect_rows(
+  $sql$
+    select id from public.ideas
+    where author_id = '00000000-0000-0000-0000-00000000000a'
+  $sql$,
+  1
+);
+
+rollback;
+
+
+-- ============================================================
+-- EXISTING FIELD VALIDATION TESTS
+-- ============================================================
 
 -- Field rules: required, not blank, and within the length limits.
 begin;
