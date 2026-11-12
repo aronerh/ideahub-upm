@@ -9,8 +9,9 @@ import { createClient } from "@/lib/supabase/server";
 vi.mock("@/lib/auth/currentUser", () => ({ getCurrentUser: vi.fn() }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: vi.fn() }));
 vi.mock("@/lib/contact/notifyTeam", () => ({ notifyTeam: vi.fn() }));
+const request = vi.hoisted(() => ({ origin: "https://preview.example" as string | null }));
 vi.mock("next/headers", () => ({
-  headers: async () => new Headers({ origin: "https://preview.example" }),
+  headers: async () => new Headers(request.origin ? { origin: request.origin } : {}),
 }));
 // Like Next.js, redirect stops the action by throwing.
 vi.mock("next/navigation", () => ({
@@ -40,7 +41,8 @@ function signInAs(id: string | null, email = "bob@gmail.com") {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  idea = { id: ideaId, title: "Study room finder", author_id: authorId };
+  request.origin = "https://preview.example";
+  idea ={ id: ideaId, title: "Study room finder", author_id: authorId };
   insertError = null;
   insert.mockImplementation(async () => ({ error: insertError }));
   vi.mocked(createClient).mockResolvedValue({
@@ -66,6 +68,16 @@ describe("requestContact", () => {
       requesterEmail: "bob@gmail.com",
       message: "Let's talk.",
     });
+  });
+
+  it("links the idea on the live site when the request carries no origin", async () => {
+    request.origin = null;
+
+    await requestContact({}, formWith({ idea_id: ideaId, message: "Hi" }));
+
+    expect(notifyTeam).toHaveBeenCalledWith(
+      expect.objectContaining({ ideaUrl: `https://ideahub-upm.vercel.app/ideas/${ideaId}` }),
+    );
   });
 
   it("sends visitors to sign in", async () => {
