@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createClient } from "@supabase/supabase-js";
-import { notifyTeam, type ContactNotification } from "@/lib/contact/notifyTeam";
+import { contactEmailText, notifyTeam, type ContactNotification } from "@/lib/contact/notifyTeam";
 
 // IH-42: the email to the idea's author, without Supabase or Resend.
 
@@ -76,5 +76,30 @@ describe("notifyTeam", () => {
 
     expect(await notifyTeam(notification)).toBe("failed");
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  // The request is already saved when this runs, so it must never throw into the investor's page.
+  it("reports a failure instead of throwing when looking up the author crashes", async () => {
+    getUserById.mockRejectedValue(new Error("Supabase is down"));
+
+    expect(await notifyTeam(notification)).toBe("failed");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("reports a failure instead of throwing when the email service can't be reached", async () => {
+    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+
+    expect(await notifyTeam(notification)).toBe("failed");
+  });
+});
+
+describe("contactEmailText", () => {
+  it("tells the author who wrote, about which idea, what they said, and where to find the idea", () => {
+    const text = contactEmailText(notification);
+
+    expect(text).toContain("bob@gmail.com");
+    expect(text).toContain("“Study room finder”");
+    expect(text).toContain("I'd like to fund this.");
+    expect(text).toContain("https://ideahub-upm.vercel.app/ideas/abc");
   });
 });
