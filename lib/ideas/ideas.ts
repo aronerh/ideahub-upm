@@ -8,6 +8,8 @@ export type IdeaSummary = {
 };
 
 export type Idea = IdeaSummary & {
+  // Who published it: IH-43 shows the contact requests only to them.
+  author_id: string;
   problem: string;
   solution: string;
   team_members: string;
@@ -64,7 +66,7 @@ export function validateIdeaInput(values: IdeaInput): IdeaFieldErrors | null {
 }
 
 export const ideaSummaryColumns = "id, title, pitch, created_at";
-export const ideaColumns = "id, title, pitch, problem, solution, team_members, created_at";
+export const ideaColumns = "id, author_id, title, pitch, problem, solution, team_members, created_at";
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
