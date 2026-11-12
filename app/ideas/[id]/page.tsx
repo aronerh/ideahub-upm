@@ -25,12 +25,15 @@ export default function IdeaPage({ params, searchParams }: PageProps<"/ideas/[id
 async function LoadedIdea({ params, searchParams }: Pick<PageProps<"/ideas/[id]">, "params" | "searchParams">) {
   const { id } = await params;
   const { published } = await searchParams;
-  const idea = await getIdea(id);
-  if (!idea) notFound();
+  
+const idea = await getIdea(id);
+if (!idea) notFound();
 
   // IH-43: only the author sees the requests. RLS would also show an investor their own request.
   const user = await getCurrentUser();
   const contactRequests = user?.id === idea.author_id ? await listContactRequests(idea.id) : null;
+  const isOwner = user?.id === idea.author_id;
+
 
   return (
     <>
@@ -39,7 +42,7 @@ async function LoadedIdea({ params, searchParams }: Pick<PageProps<"/ideas/[id]"
           Your idea is live. Anyone can read it now.
         </p>
       )}
-      <IdeaDetail idea={idea} />
+      <IdeaDetail idea={idea} isOwner={isOwner} />
       {contactRequests && <ContactRequests requests={contactRequests} />}
     </>
   );
