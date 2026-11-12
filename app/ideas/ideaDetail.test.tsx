@@ -7,6 +7,7 @@ afterEach(cleanup);
 
 const idea: Idea = {
   id: "00000000-0000-4000-8000-000000000001",
+  author_id: "00000000-0000-4000-8000-0000000000aa",
   title: "Campus bike share",
   pitch: "Borrow a bike between Montegancedo and Ciudad Universitaria.",
   problem: "The bus between campuses is slow and crowded.",

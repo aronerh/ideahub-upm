@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ContactRequests } from "@/app/ideas/contactRequests";
 import { IdeaDetail, IdeaDetailSkeleton } from "@/app/ideas/ideaDetail";
 import { BackLink } from "@/app/ui/backLink";
+import { getCurrentUser } from "@/lib/auth/currentUser";
+import { listContactRequests } from "@/lib/contact/queries";
 import { getIdea } from "@/lib/ideas/queries";
 
 export const metadata: Metadata = { title: "Idea · IdeaHub UPM" };
@@ -25,6 +28,10 @@ async function LoadedIdea({ params, searchParams }: Pick<PageProps<"/ideas/[id]"
   const idea = await getIdea(id);
   if (!idea) notFound();
 
+  // IH-43: only the author sees the requests. RLS would also show an investor their own request.
+  const user = await getCurrentUser();
+  const contactRequests = user?.id === idea.author_id ? await listContactRequests(idea.id) : null;
+
   return (
     <>
       {published && (
@@ -33,6 +40,7 @@ async function LoadedIdea({ params, searchParams }: Pick<PageProps<"/ideas/[id]"
         </p>
       )}
       <IdeaDetail idea={idea} />
+      {contactRequests && <ContactRequests requests={contactRequests} />}
     </>
   );
 }
