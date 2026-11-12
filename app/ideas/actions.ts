@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/currentUser";
 import { emailDomainError, isUpmEmail } from "@/lib/auth/emailDomain";
@@ -46,3 +47,43 @@ export async function publishIdea(
 
   redirect(`/ideas/${data.id}?published=1`);
 }
+
+/**
+ * IH-45: Delete an idea owned by the current student.
+ */
+export async function deleteIdea(ideaId: string): Promise<void> {
+  // Require an authenticated user.
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  // Connect using the current user's Supabase session.
+  const supabase = await createClient();
+
+  // Delete only an idea belonging to this student.
+  const { data, error } = await supabase
+    .from("ideas")
+    .delete()
+    .eq("id", ideaId)
+    .eq("author_id", user.id)
+    .select("id");
+
+  if (error) {
+    throw new Error("The idea could not be deleted.");
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error(
+      "Idea not found or you don't have permission to delete it."
+    );
+  }
+
+  // Refresh the public idea list.
+  revalidatePath("/ideas");
+
+  // Send the student back to the list.
+  redirect("/ideas");
+}
+

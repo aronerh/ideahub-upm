@@ -15,6 +15,7 @@ export type Idea = IdeaSummary & {
   team_members: string;
 };
 
+
 // The 5 fields a student fills in (IH-10).
 export type IdeaInput = Pick<Idea, "title" | "pitch" | "problem" | "solution" | "team_members">;
 
