@@ -13,7 +13,9 @@ export type Idea = IdeaSummary & {
   problem: string;
   solution: string;
   team_members: string;
+  author_id: string;
 };
+
 
 // The 5 fields a student fills in (IH-10).
 export type IdeaInput = Pick<Idea, "title" | "pitch" | "problem" | "solution" | "team_members">;
