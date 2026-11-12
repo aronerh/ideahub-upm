@@ -13,7 +13,6 @@ export type Idea = IdeaSummary & {
   problem: string;
   solution: string;
   team_members: string;
-  author_id: string;
 };
 
 
