@@ -98,11 +98,6 @@ select tests.sign_in_as(
   'ana@alumnos.upm.es'
 );
 
--- Editing is still forbidden until IH-46 is implemented.
-select tests.expect_rows(
-  $sql$ update public.ideas set title = 'Changed' $sql$,
-  0
-);
 
 -- The author can delete their own idea.
 select tests.expect_rows(
@@ -189,4 +184,134 @@ begin
   insert into public.ideas (author_id, title, pitch, problem, solution, team_members)
   values ('00000000-0000-0000-0000-00000000000a', repeat('a', 80), repeat('b', 140), 'Problem', 'Solution', 'Ana');
 end $$;
+rollback;
+
+-- ============================================================
+-- IH-46: TEST 1 - OWNER CAN EDIT THEIR OWN IDEA
+-- ============================================================
+
+begin;
+
+insert into auth.users (id, email)
+values (
+  '00000000-0000-0000-0000-00000000000a',
+  'ana@alumnos.upm.es'
+);
+
+insert into public.ideas
+  (author_id, title, pitch, problem, solution, team_members)
+values
+  ('00000000-0000-0000-0000-00000000000a',
+   'Original Idea', 'Original Pitch', 'Problem',
+   'Solution', 'Ana');
+
+select tests.sign_in_as(
+  '00000000-0000-0000-0000-00000000000a',
+  'ana@alumnos.upm.es'
+);
+
+-- The owner can update their idea.
+select tests.expect_rows(
+  $sql$
+    update public.ideas
+    set title = 'Updated Idea',
+        pitch = 'Updated Pitch'
+    where author_id =
+      '00000000-0000-0000-0000-00000000000a'
+  $sql$,
+  1
+);
+
+-- Verify the new values were saved.
+select tests.expect_rows(
+  $sql$
+    select id from public.ideas
+    where title = 'Updated Idea'
+      and pitch = 'Updated Pitch'
+  $sql$,
+  1
+);
+
+rollback;
+
+
+-- ============================================================
+-- IH-46: TEST 2 - ANOTHER STUDENT CANNOT EDIT
+-- ============================================================
+
+begin;
+
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-00000000000a',
+   'ana@alumnos.upm.es'),
+  ('00000000-0000-0000-0000-00000000000b',
+   'bob@alumnos.upm.es');
+
+-- Ana owns this idea.
+insert into public.ideas
+  (author_id, title, pitch, problem, solution, team_members)
+values
+  ('00000000-0000-0000-0000-00000000000a',
+   'Ana Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+
+-- Bob signs in.
+select tests.sign_in_as(
+  '00000000-0000-0000-0000-00000000000b',
+  'bob@alumnos.upm.es'
+);
+
+-- Bob cannot edit Ana's idea.
+select tests.expect_rows(
+  $sql$
+    update public.ideas
+    set title = 'Hacked Idea'
+    where author_id =
+      '00000000-0000-0000-0000-00000000000a'
+  $sql$,
+  0
+);
+
+-- Verify Ana's original title remains unchanged.
+select tests.expect_rows(
+  $sql$
+    select id from public.ideas
+    where title = 'Ana Idea'
+      and author_id =
+        '00000000-0000-0000-0000-00000000000a'
+  $sql$,
+  1
+);
+
+rollback;
+
+
+-- ============================================================
+-- IH-46: TEST 3 - VISITOR CANNOT EDIT IDEAS
+-- ============================================================
+
+begin;
+
+insert into auth.users (id, email)
+values (
+  '00000000-0000-0000-0000-00000000000a',
+  'ana@alumnos.upm.es'
+);
+
+insert into public.ideas
+  (author_id, title, pitch, problem, solution, team_members)
+values
+  ('00000000-0000-0000-0000-00000000000a',
+   'Public Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+
+select tests.act_as_visitor();
+
+-- Visitors must not be able to edit ideas.
+select tests.expect_rows(
+  $sql$
+    update public.ideas
+    set title = 'Changed by visitor'
+  $sql$,
+  0
+);
+
 rollback;
