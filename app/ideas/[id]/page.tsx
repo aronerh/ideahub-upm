@@ -7,6 +7,7 @@ import { BackLink } from "@/app/ui/backLink";
 import { getCurrentUser } from "@/lib/auth/currentUser";
 import { listContactRequests } from "@/lib/contact/queries";
 import { getIdea } from "@/lib/ideas/queries";
+import { ContactForm } from "@/app/ideas/contactForm";
 
 export const metadata: Metadata = { title: "Idea · IdeaHub UPM" };
 
@@ -33,7 +34,7 @@ if (!idea) notFound();
   const user = await getCurrentUser();
   const contactRequests = user?.id === idea.author_id ? await listContactRequests(idea.id) : null;
   const isOwner = user?.id === idea.author_id;
-
+  const ContactFormComponent = ContactForm;
 
   return (
     <>
@@ -44,6 +45,8 @@ if (!idea) notFound();
       )}
       <IdeaDetail idea={idea} isOwner={isOwner} />
       {contactRequests && <ContactRequests requests={contactRequests} />}
+      {!isOwner && <ContactFormComponent ideaId={idea.id} signedIn={!!user} />}
+
     </>
   );
 }
