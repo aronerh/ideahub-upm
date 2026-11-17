@@ -1,4 +1,4 @@
-
+import Link from "next/link";
 import { formatIdeaDate, type Idea } from "@/lib/ideas/ideas";
 import { DeleteIdeaButton } from "@/app/ideas/deleteIdeaButton";
 
@@ -44,8 +44,16 @@ export function IdeaDetail({
         </section>
       ))}
 
+      
       {isOwner && (
-        <div className="mt-8 border-t border-line pt-6">
+        <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-line pt-6">
+          <Link
+            href={`/ideas/${idea.id}/edit`}
+            className="inline-flex items-center justify-center rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink hover:bg-soft"
+          >
+            Edit idea
+          </Link>
+
           <DeleteIdeaButton ideaId={idea.id} />
         </div>
       )}
