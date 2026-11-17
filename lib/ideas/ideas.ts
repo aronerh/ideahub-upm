@@ -7,17 +7,30 @@ export type IdeaSummary = {
   created_at: string;
 };
 
-export type Idea = IdeaSummary & {
+// IH-38: details only signed-in users (UPM students and investors) can read.
+export type IdeaVisibility = {
+  problem_private: boolean;
+  solution_private: boolean;
+};
+
+export type Idea = IdeaSummary & IdeaVisibility & {
   // Who published it: IH-43 shows the contact requests only to them.
   author_id: string;
+  // IH-38: null when the reader isn't signed in and the detail is private.
+  problem: string | null;
+  solution: string | null;
+  // IH-38: null for visitors who aren't signed in.
+  team_members: string | null;
+};
+
+// The 5 fields a student fills in (IH-10).
+export type IdeaInput = {
+  title: string;
+  pitch: string;
   problem: string;
   solution: string;
   team_members: string;
 };
-
-
-// The 5 fields a student fills in (IH-10).
-export type IdeaInput = Pick<Idea, "title" | "pitch" | "problem" | "solution" | "team_members">;
 
 // Same limits as the check constraints in 002_ideas.sql.
 export const ideaFieldMaxLength: Record<keyof IdeaInput, number> = {
@@ -37,6 +50,14 @@ export function readIdeaInput(formData: FormData): IdeaInput {
     problem: read("problem"),
     solution: read("solution"),
     team_members: read("team_members"),
+  };
+}
+
+// IH-38: a ticked box makes that detail private.
+export function readIdeaVisibility(formData: FormData): IdeaVisibility {
+  return {
+    problem_private: formData.get("problem_private") === "on",
+    solution_private: formData.get("solution_private") === "on",
   };
 }
 
@@ -67,7 +88,6 @@ export function validateIdeaInput(values: IdeaInput): IdeaFieldErrors | null {
 }
 
 export const ideaSummaryColumns = "id, title, pitch, created_at";
-export const ideaColumns = "id, author_id, title, pitch, problem, solution, team_members, created_at";
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

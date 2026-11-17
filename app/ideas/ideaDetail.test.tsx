@@ -22,6 +22,8 @@ const idea: Idea = {
   solution: "Docking stations at both campuses.\nUnlock a bike with the UPM card.",
   team_members: "Marco Grilli, Aron Herreros",
   created_at: "2026-10-27T10:00:00Z",
+  problem_private: false,
+  solution_private: false,
 };
 
 describe("IdeaDetail", () => {
@@ -41,13 +43,26 @@ describe("IdeaDetail", () => {
       ["Problem", idea.problem],
       ["Solution", idea.solution],
       ["Team members", idea.team_members],
-    ]) {
+    ] as const) {
       const section = within(article)
         .getByRole("heading", { level: 2, name: heading })
         .parentElement!;
 
       expect(section.textContent).toContain(body);
     }
+  });
+
+  // IH-38: the database sends null for what a visitor can't see.
+  it("locks hidden details with a sign-in button and shows the rest", () => {
+    render(<IdeaDetail idea={{ ...idea, problem: null, team_members: null, problem_private: true }} />);
+    const article = screen.getByRole("article");
+
+    for (const heading of ["Problem", "Team members"]) {
+      const section = within(article).getByRole("heading", { level: 2, name: heading }).parentElement!;
+      expect(section.textContent).toContain("Only UPM students and investors can read this.");
+      expect(within(section).getByRole("link", { name: "Sign in" }).getAttribute("href")).toBe("/sign-in");
+    }
+    expect(article.textContent).toContain(idea.solution);
   });
 
   it("shows the publication date", () => {

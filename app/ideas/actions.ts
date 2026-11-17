@@ -7,13 +7,16 @@ import { emailDomainError, isUpmEmail } from "@/lib/auth/emailDomain";
 import {
   type IdeaFieldErrors,
   type IdeaInput,
+  type IdeaVisibility,
   readIdeaInput,
+  readIdeaVisibility,
   validateIdeaInput,
 } from "@/lib/ideas/ideas";
 import { createClient } from "@/lib/supabase/server";
 
 export type IdeaFormState = {
   values?: IdeaInput;
+  visibility?: IdeaVisibility;
   fieldErrors?: IdeaFieldErrors;
   formError?: string;
 };
@@ -30,19 +33,28 @@ export async function publishIdea(
   }
 
   const values = readIdeaInput(formData);
+  const visibility = readIdeaVisibility(formData);
   if (!isUpmEmail(user.email)) {
-    return { values, formError: emailDomainError };
+    return { values, visibility, formError: emailDomainError };
   }
 
   const fieldErrors = validateIdeaInput(values);
   if (fieldErrors) {
-    return { values, fieldErrors };
+    return { values, visibility, fieldErrors };
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.from("ideas").insert(values).select("id").single();
+  const { data, error } = await supabase
+    .from("ideas")
+    .insert({ ...values, ...visibility })
+    .select("id")
+    .single();
   if (error) {
-    return { values, formError: "Your idea couldn't be published. Check every field and try again." };
+    return {
+      values,
+      visibility,
+      formError: "Your idea couldn't be published. Check every field and try again.",
+    };
   }
 
   redirect(`/ideas/${data.id}?published=1`);

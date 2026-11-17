@@ -26,6 +26,17 @@ describe("IdeaForm", () => {
     }
   });
 
+  // IH-38: problem and solution can each be made private; ideas are public by default.
+  it("lets the student make the problem and the solution private, unticked by default", () => {
+    render(<IdeaForm />);
+    const boxes = screen.getAllByRole("checkbox", { name: "Only UPM students and investors can read this" });
+
+    expect(boxes.map((box) => box.getAttribute("name"))).toEqual(["problem_private", "solution_private"]);
+    for (const box of boxes) {
+      expect(box).toHaveProperty("checked", false);
+    }
+  });
+
   it("has a publish button", () => {
     render(<IdeaForm />);
     expect(screen.getByRole("button", { name: "Publish idea" })).toBeTruthy();

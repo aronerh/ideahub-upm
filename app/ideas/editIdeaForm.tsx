@@ -19,13 +19,14 @@ import {
 } from "@/lib/ideas/ideas";
 
 export function EditIdeaForm({ idea }: { idea: Idea }) {
-  // Existing values used to pre-fill the form.
+  // Existing values used to pre-fill the form. Only the author opens this page,
+  // so idea_details (IH-38) always sends every field; the fallbacks only satisfy the types.
   const initialValues: IdeaInput = {
     title: idea.title,
     pitch: idea.pitch,
-    problem: idea.problem,
-    solution: idea.solution,
-    team_members: idea.team_members,
+    problem: idea.problem ?? "",
+    solution: idea.solution ?? "",
+    team_members: idea.team_members ?? "",
   };
 
   // Bind the idea ID to our IH-46 server action.

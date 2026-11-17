@@ -36,6 +36,8 @@ const idea: Idea = {
   solution: "Provide shared bikes at both campuses.",
   team_members: "Ana, Marco",
   created_at: "2026-10-27T10:00:00Z",
+  problem_private: false,
+  solution_private: false,
 };
 
 describe("EditIdeaForm", () => {
@@ -48,7 +50,7 @@ describe("EditIdeaForm", () => {
       ["Problem", idea.problem],
       ["Solution", idea.solution],
       ["Team members", idea.team_members],
-    ];
+    ] as const;
 
     for (const [label, value] of fields) {
       const field = screen.getByLabelText(label);
