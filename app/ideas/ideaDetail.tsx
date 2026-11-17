@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import { formatIdeaDate, type Idea } from "@/lib/ideas/ideas";
 import { DeleteIdeaButton } from "@/app/ideas/deleteIdeaButton";
 
@@ -39,9 +40,17 @@ export function IdeaDetail({
           </h2>
 
           {section.body === null ? (
-            <p className="mt-2 text-sm text-ink-soft">
-              Private: visible to signed-in UPM members.
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <p className="text-sm text-ink-soft">
+                Only UPM students and investors can read this.
+              </p>
+              <Link
+                href="/sign-in"
+                className="rounded-lg border border-line px-3 py-1.5 text-sm font-medium text-ink hover:border-accent hover:text-accent"
+              >
+                Sign in
+              </Link>
+            </div>
           ) : (
             <p className="mt-2 max-w-prose whitespace-pre-line break-words leading-relaxed">
               {section.body}

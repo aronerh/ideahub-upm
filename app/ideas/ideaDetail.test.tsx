@@ -42,15 +42,17 @@ describe("IdeaDetail", () => {
     }
   });
 
-  // IH-38: the database sends null for a private detail the reader can't see.
-  it("says a hidden detail is private and still shows the team", () => {
-    render(<IdeaDetail idea={{ ...idea, problem: null, problem_private: true }} />);
+  // IH-38: the database sends null for what a visitor can't see.
+  it("locks hidden details with a sign-in button and shows the rest", () => {
+    render(<IdeaDetail idea={{ ...idea, problem: null, team_members: null, problem_private: true }} />);
     const article = screen.getByRole("article");
-    const problem = within(article).getByRole("heading", { level: 2, name: "Problem" }).parentElement!;
 
-    expect(problem.textContent).toContain("Private: visible to signed-in UPM members.");
+    for (const heading of ["Problem", "Team members"]) {
+      const section = within(article).getByRole("heading", { level: 2, name: heading }).parentElement!;
+      expect(section.textContent).toContain("Only UPM students and investors can read this.");
+      expect(within(section).getByRole("link", { name: "Sign in" }).getAttribute("href")).toBe("/sign-in");
+    }
     expect(article.textContent).toContain(idea.solution);
-    expect(article.textContent).toContain(idea.team_members);
   });
 
   it("shows the publication date", () => {

@@ -7,7 +7,7 @@ export type IdeaSummary = {
   created_at: string;
 };
 
-// IH-38: details only the author and signed-in UPM users can read.
+// IH-38: details only signed-in users (UPM students and investors) can read.
 export type IdeaVisibility = {
   problem_private: boolean;
   solution_private: boolean;
@@ -16,10 +16,11 @@ export type IdeaVisibility = {
 export type Idea = IdeaSummary & IdeaVisibility & {
   // Who published it: IH-43 shows the contact requests only to them.
   author_id: string;
-  // IH-38: null when the detail is private and the reader can't see it.
+  // IH-38: null when the reader isn't signed in and the detail is private.
   problem: string | null;
   solution: string | null;
-  team_members: string;
+  // IH-38: null for visitors who aren't signed in.
+  team_members: string | null;
 };
 
 // The 5 fields a student fills in (IH-10).

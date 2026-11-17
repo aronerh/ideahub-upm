@@ -24,7 +24,7 @@ export async function listIdeas(): Promise<IdeaSummary[]> {
 export async function getIdea(id: string): Promise<Idea | null> {
   if (!isIdeaId(id)) return null;
 
-  // IH-38: idea_details (004_idea_visibility.sql) hides private details from visitors and non-UPM users.
+  // IH-38: idea_details (004_idea_visibility.sql) hides private details and the team from visitors.
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("idea_details", { idea_id: id }).maybeSingle();
 
