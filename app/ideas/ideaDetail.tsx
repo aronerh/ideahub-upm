@@ -38,9 +38,15 @@ export function IdeaDetail({
             {section.heading}
           </h2>
 
-          <p className="mt-2 max-w-prose whitespace-pre-line break-words leading-relaxed">
-            {section.body}
-          </p>
+          {section.body === null ? (
+            <p className="mt-2 text-sm text-ink-soft">
+              Private: visible to signed-in UPM members.
+            </p>
+          ) : (
+            <p className="mt-2 max-w-prose whitespace-pre-line break-words leading-relaxed">
+              {section.body}
+            </p>
+          )}
         </section>
       ))}
 

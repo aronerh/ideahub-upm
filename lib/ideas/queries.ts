@@ -3,12 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import {
   type Idea,
   type IdeaSummary,
-  ideaColumns,
   ideaSummaryColumns,
   isIdeaId,
 } from "@/lib/ideas/ideas";
 
 // Anyone can read ideas (RLS policy "Anyone can read ideas"), so these work for visitors too.
+// Problem and solution are only readable through idea_details (005_hide_private_columns.sql).
 
 export async function listIdeas(): Promise<IdeaSummary[]> {
   const supabase = await createClient();
@@ -24,13 +24,10 @@ export async function listIdeas(): Promise<IdeaSummary[]> {
 export async function getIdea(id: string): Promise<Idea | null> {
   if (!isIdeaId(id)) return null;
 
+  // IH-38: idea_details (004_idea_visibility.sql) hides private details from visitors and non-UPM users.
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("ideas")
-    .select(ideaColumns)
-    .eq("id", id)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("idea_details", { idea_id: id }).maybeSingle();
 
   if (error) throw new Error(`Couldn't load idea ${id}: ${error.message}`);
-  return data;
+  return data as Idea | null;
 }

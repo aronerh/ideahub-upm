@@ -47,6 +47,7 @@ export function IdeaForm() {
         defaultValue={values?.problem}
         error={errors?.problem}
       />
+      <PrivateCheckbox name="problem_private" defaultChecked={state.visibility?.problem_private} />
       <FormField
         name="solution"
         label="Solution"
@@ -57,6 +58,7 @@ export function IdeaForm() {
         defaultValue={values?.solution}
         error={errors?.solution}
       />
+      <PrivateCheckbox name="solution_private" defaultChecked={state.visibility?.solution_private} />
       <FormField
         name="team_members"
         label="Team members"
@@ -77,5 +79,15 @@ export function IdeaForm() {
         {!pending && <ArrowIcon className="h-4 w-4" />}
       </button>
     </form>
+  );
+}
+
+// IH-38: the field above it stays hidden from visitors and non-UPM accounts.
+function PrivateCheckbox({ name, defaultChecked }: { name: string; defaultChecked?: boolean }) {
+  return (
+    <label className="mt-2 flex items-center gap-2 text-sm text-ink-soft">
+      <input type="checkbox" name={name} defaultChecked={defaultChecked} className="h-4 w-4 accent-accent" />
+      Only signed-in UPM members can read this
+    </label>
   );
 }

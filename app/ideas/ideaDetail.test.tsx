@@ -21,6 +21,8 @@ const idea: Idea = {
   solution: "Docking stations at both campuses.\nUnlock a bike with the UPM card.",
   team_members: "Marco Grilli, Aron Herreros",
   created_at: "2026-10-27T10:00:00Z",
+  problem_private: false,
+  solution_private: false,
 };
 
 describe("IdeaDetail", () => {
@@ -34,10 +36,21 @@ describe("IdeaDetail", () => {
       ["Problem", idea.problem],
       ["Solution", idea.solution],
       ["Team members", idea.team_members],
-    ]) {
+    ] as const) {
       const section = within(article).getByRole("heading", { level: 2, name: heading }).parentElement!;
       expect(section.textContent).toContain(body);
     }
+  });
+
+  // IH-38: the database sends null for a private detail the reader can't see.
+  it("says a hidden detail is private and still shows the team", () => {
+    render(<IdeaDetail idea={{ ...idea, problem: null, problem_private: true }} />);
+    const article = screen.getByRole("article");
+    const problem = within(article).getByRole("heading", { level: 2, name: "Problem" }).parentElement!;
+
+    expect(problem.textContent).toContain("Private: visible to signed-in UPM members.");
+    expect(article.textContent).toContain(idea.solution);
+    expect(article.textContent).toContain(idea.team_members);
   });
 
   it("shows the publication date", () => {

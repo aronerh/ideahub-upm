@@ -55,7 +55,15 @@ describe("publishIdea", () => {
     await expect(publishIdea({}, formWith(validIdea))).rejects.toThrow(
       `redirect:/ideas/${ideaId}?published=1`,
     );
-    expect(insert).toHaveBeenCalledWith(validIdea);
+    expect(insert).toHaveBeenCalledWith({ ...validIdea, problem_private: false, solution_private: false });
+  });
+
+  // IH-38: a ticked box saves that detail as private.
+  it("saves which details the student made private", async () => {
+    await expect(
+      publishIdea({}, formWith({ ...validIdea, solution_private: "on" })),
+    ).rejects.toThrow(`redirect:/ideas/${ideaId}?published=1`);
+    expect(insert).toHaveBeenCalledWith({ ...validIdea, problem_private: false, solution_private: true });
   });
 
   it("saves nothing and shows a message per field when the form is empty", async () => {
