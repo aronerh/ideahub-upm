@@ -1,9 +1,10 @@
+
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { IdeaDetail } from "@/app/ideas/ideaDetail";
 import type { Idea } from "@/lib/ideas/ideas";
 
-
+// Mock the Delete component to avoid server-only imports.
 vi.mock("@/app/ideas/deleteIdeaButton", () => ({
   DeleteIdeaButton: () => (
     <button type="button">Delete idea</button>
@@ -30,14 +31,23 @@ describe("IdeaDetail", () => {
     render(<IdeaDetail idea={idea} />);
     const article = screen.getByRole("article");
 
-    expect(within(article).getByRole("heading", { level: 1 }).textContent).toBe("Campus bike share");
-    expect(article.textContent).toContain("Borrow a bike between Montegancedo and Ciudad Universitaria.");
+    expect(
+      within(article).getByRole("heading", { level: 1 }).textContent
+    ).toBe("Campus bike share");
+
+    expect(article.textContent).toContain(
+      "Borrow a bike between Montegancedo and Ciudad Universitaria."
+    );
+
     for (const [heading, body] of [
       ["Problem", idea.problem],
       ["Solution", idea.solution],
       ["Team members", idea.team_members],
     ] as const) {
-      const section = within(article).getByRole("heading", { level: 2, name: heading }).parentElement!;
+      const section = within(article)
+        .getByRole("heading", { level: 2, name: heading })
+        .parentElement!;
+
       expect(section.textContent).toContain(body);
     }
   });
@@ -57,19 +67,27 @@ describe("IdeaDetail", () => {
 
   it("shows the publication date", () => {
     render(<IdeaDetail idea={idea} />);
+
     const date = screen.getByText("Published 27 Oct 2026");
 
-    expect(date.getAttribute("datetime")).toBe("2026-10-27T10:00:00Z");
+    expect(date.getAttribute("datetime")).toBe(
+      "2026-10-27T10:00:00Z"
+    );
   });
 
   it("keeps the line breaks the student typed", () => {
     render(<IdeaDetail idea={idea} />);
+
     const solution = screen.getByText(/Docking stations/);
 
-    expect(solution.textContent).toBe("Docking stations at both campuses.\nUnlock a bike with the UPM card.");
+    expect(solution.textContent).toBe(
+      "Docking stations at both campuses.\nUnlock a bike with the UPM card."
+    );
+
     expect(solution.className).toContain("whitespace-pre-line");
   });
-    // IH-45: The Delete button must not appear for other users.
+
+  // IH-45: Non-owners must not see Delete.
   it("hides the Delete button from non-owners", () => {
     render(<IdeaDetail idea={idea} isOwner={false} />);
 
@@ -78,12 +96,34 @@ describe("IdeaDetail", () => {
     ).toBeNull();
   });
 
-  // IH-45: The Delete button appears for the idea's owner.
+  // IH-45: Owners can see Delete.
   it("shows the Delete button to the owner", () => {
     render(<IdeaDetail idea={idea} isOwner={true} />);
 
     expect(
       screen.getByRole("button", { name: "Delete idea" })
     ).toBeTruthy();
+  });
+
+  // IH-46: Non-owners must not see Edit.
+  it("hides the Edit link from non-owners", () => {
+    render(<IdeaDetail idea={idea} isOwner={false} />);
+
+    expect(
+      screen.queryByRole("link", { name: "Edit idea" })
+    ).toBeNull();
+  });
+
+  // IH-46: Owners can see Edit.
+  it("shows the Edit link to the owner", () => {
+    render(<IdeaDetail idea={idea} isOwner={true} />);
+
+    const editLink = screen.getByRole("link", {
+      name: "Edit idea",
+    });
+
+    expect(editLink.getAttribute("href")).toBe(
+      `/ideas/${idea.id}/edit`
+    );
   });
 });

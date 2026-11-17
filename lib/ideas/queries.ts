@@ -8,7 +8,7 @@ import {
 } from "@/lib/ideas/ideas";
 
 // Anyone can read ideas (RLS policy "Anyone can read ideas"), so these work for visitors too.
-// Problem and solution are only readable through idea_details (005_hide_private_columns.sql).
+// Problem, solution and team members are only readable through idea_details (006_hide_private_columns.sql).
 
 export async function listIdeas(): Promise<IdeaSummary[]> {
   const supabase = await createClient();
@@ -24,7 +24,7 @@ export async function listIdeas(): Promise<IdeaSummary[]> {
 export async function getIdea(id: string): Promise<Idea | null> {
   if (!isIdeaId(id)) return null;
 
-  // IH-38: idea_details (004_idea_visibility.sql) hides private details and the team from visitors.
+  // IH-38: idea_details (005_idea_visibility.sql) hides private details and the team from visitors.
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("idea_details", { idea_id: id }).maybeSingle();
 

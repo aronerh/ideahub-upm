@@ -99,3 +99,70 @@ export async function deleteIdea(ideaId: string): Promise<void> {
   redirect("/ideas");
 }
 
+
+/**
+ * IH-46: Update an idea owned by the current student.
+ */
+export async function updateIdea(
+  ideaId: string,
+  _state: IdeaFormState,
+  formData: FormData,
+): Promise<IdeaFormState> {
+  // Require an authenticated student.
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  // Read the five edited fields.
+  const values = readIdeaInput(formData);
+
+  // Check the student's UPM email.
+  if (!isUpmEmail(user.email)) {
+    return { values, formError: emailDomainError };
+  }
+
+  // Validate the edited values.
+  const fieldErrors = validateIdeaInput(values);
+
+  if (fieldErrors) {
+    return { values, fieldErrors };
+  }
+
+  // Connect to Supabase as the current user.
+  const supabase = await createClient();
+
+  // Only update an idea belonging to this student.
+  const { data, error } = await supabase
+    .from("ideas")
+    .update(values)
+    .eq("id", ideaId)
+    .eq("author_id", user.id)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return {
+      values,
+      formError: "Your idea couldn't be updated. Please try again.",
+    };
+  }
+
+  // No matching idea, or the user isn't its owner.
+  if (!data) {
+    return {
+      values,
+      formError: "Idea not found or you don't have permission to edit it.",
+    };
+  }
+
+  // Refresh the ideas list and detail page.
+  revalidatePath("/ideas");
+  revalidatePath(`/ideas/${ideaId}`);
+
+  // Return to the updated idea.
+  redirect(`/ideas/${ideaId}`);
+}
+
+

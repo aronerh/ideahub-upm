@@ -1,4 +1,4 @@
--- Tests for IH-38 (004_idea_visibility.sql, 005_hide_private_columns.sql):
+-- Tests for IH-38 (005_idea_visibility.sql, 006_hide_private_columns.sql):
 -- private problem and solution, and all team members, are readable only by signed-in users.
 -- Each test runs in its own transaction and rolls back.
 

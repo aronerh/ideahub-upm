@@ -9,7 +9,7 @@ alter table public.ideas
   add column solution_private boolean not null default false;
 
 -- One idea, with the details the reader may not see as null.
--- Security definer, so it still reads the columns 005 hides.
+-- Security definer, so it still reads the columns 006 hides.
 create or replace function public.idea_details(idea_id uuid)
 returns table (
   id uuid,
