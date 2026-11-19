@@ -1,6 +1,6 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { publishIdea, updateIdea } from "@/app/ideas/actions";
+import { deleteIdea, publishIdea, updateIdea } from "@/app/ideas/actions";
 import { getCurrentUser } from "@/lib/auth/currentUser";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
@@ -55,6 +55,15 @@ let updateResult: {
   error: { message: string } | null;
 };
 
+// Mock database DELETE and its query chain.
+const remove = vi.fn();
+const deleteEq = vi.fn();
+
+let deleteResult: {
+  data: { id: string }[] | null;
+  error: { message: string } | null;
+};
+
 function formWith(values: Record<string, string>) {
   const formData = new FormData();
 
@@ -104,10 +113,22 @@ beforeEach(() => {
 
   maybeSingle.mockImplementation(async () => updateResult);
 
+  // Default DELETE result: one idea removed.
+  deleteResult = { data: [{ id: ideaId }], error: null };
+
+  const deleteQuery = {
+    eq: deleteEq,
+    select: async () => deleteResult,
+  };
+
+  remove.mockReturnValue(deleteQuery);
+  deleteEq.mockReturnValue(deleteQuery);
+
   vi.mocked(createClient).mockResolvedValue({
     from: () => ({
       insert,
       update,
+      delete: remove,
     }),
   } as unknown as Awaited<ReturnType<typeof createClient>>);
 
@@ -319,6 +340,41 @@ describe("updateIdea", () => {
     );
 
     expect(state.values).toEqual(validIdea);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+});
+
+// IH-47: deleting your own idea.
+describe("deleteIdea", () => {
+  it("deletes only the student's own idea and takes them to the list on the home page", async () => {
+    await expect(deleteIdea(ideaId)).rejects.toThrow(/^redirect:\/$/);
+
+    expect(remove).toHaveBeenCalled();
+    expect(deleteEq).toHaveBeenCalledWith("id", ideaId);
+    expect(deleteEq).toHaveBeenCalledWith("author_id", "user-1");
+    expect(revalidatePath).toHaveBeenCalledWith("/");
+  });
+
+  it("sends a visitor to sign in without deleting", async () => {
+    signInAs(null);
+
+    await expect(deleteIdea(ideaId)).rejects.toThrow("redirect:/sign-in");
+    expect(remove).not.toHaveBeenCalled();
+  });
+
+  it("fails without redirecting when the idea isn't the student's", async () => {
+    deleteResult = { data: [], error: null };
+
+    await expect(deleteIdea(ideaId)).rejects.toThrow(
+      "Idea not found or you don't have permission to delete it.",
+    );
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("fails without redirecting when the database refuses", async () => {
+    deleteResult = { data: null, error: { message: "permission denied" } };
+
+    await expect(deleteIdea(ideaId)).rejects.toThrow("The idea could not be deleted.");
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 });

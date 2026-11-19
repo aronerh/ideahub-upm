@@ -81,7 +81,7 @@ rollback;
 -- IH-45: TEST 1 - THE OWNER CAN DELETE THEIR OWN IDEA
 -- ============================================================
 
--- The author can delete their own idea, but cannot edit it yet.
+-- The author can delete their own idea.
 begin;
 
 insert into auth.users (id, email)
@@ -314,4 +314,68 @@ select tests.expect_rows(
   0
 );
 
+rollback;
+
+-- ============================================================
+-- IH-47: more delete and edit rules
+-- ============================================================
+
+-- A visitor can't delete an idea.
+begin;
+insert into auth.users (id, email) values ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+insert into public.ideas (author_id, title, pitch, problem, solution, team_members)
+values ('00000000-0000-0000-0000-00000000000a', 'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+select tests.act_as_visitor();
+select tests.expect_rows($sql$ delete from public.ideas $sql$, 0);
+reset role;
+do $$
+begin
+  if (select count(*) from public.ideas) <> 1 then
+    raise exception 'A visitor should not be able to delete an idea';
+  end if;
+end $$;
+rollback;
+
+-- The author can't hand their idea over to someone else by editing it.
+begin;
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es'),
+  ('00000000-0000-0000-0000-00000000000b', 'bob@alumnos.upm.es');
+insert into public.ideas (author_id, title, pitch, problem, solution, team_members)
+values ('00000000-0000-0000-0000-00000000000a', 'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+select tests.expect_error($sql$
+  update public.ideas set author_id = '00000000-0000-0000-0000-00000000000b'
+$sql$, '42501');
+rollback;
+
+-- An edit must keep the field rules: an empty title is refused.
+begin;
+insert into auth.users (id, email) values ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+insert into public.ideas (author_id, title, pitch, problem, solution, team_members)
+values ('00000000-0000-0000-0000-00000000000a', 'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+select tests.expect_error($sql$ update public.ideas set title = '   ' $sql$, '23514');
+rollback;
+
+-- Deleting an idea also deletes the contact requests sent about it.
+begin;
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es'),
+  ('00000000-0000-0000-0000-00000000000b', 'investor@gmail.com');
+insert into public.ideas (id, author_id, title, pitch, problem, solution, team_members)
+values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a',
+  'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+insert into public.contact_requests (idea_id, requester_id, requester_email, message)
+values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b',
+  'investor@gmail.com', 'I would like to talk.');
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+select tests.expect_rows($sql$ delete from public.ideas $sql$, 1);
+reset role;
+do $$
+begin
+  if (select count(*) from public.contact_requests) <> 0 then
+    raise exception 'The idea''s contact requests should be deleted with it';
+  end if;
+end $$;
 rollback;
