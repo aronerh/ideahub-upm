@@ -65,6 +65,17 @@ describe("IdeaDetail", () => {
     expect(article.textContent).toContain(idea.solution);
   });
 
+  // IH-40: a private detail the database did send (the reader is signed in) is shown, not locked.
+  it("shows private details to a signed-in reader without a lock", () => {
+    render(<IdeaDetail idea={{ ...idea, problem_private: true, solution_private: true }} />);
+    const article = screen.getByRole("article");
+
+    expect(article.textContent).toContain(idea.problem);
+    expect(article.textContent).toContain(idea.solution);
+    expect(article.textContent).not.toContain("Only UPM students and investors can read this.");
+    expect(within(article).queryByRole("link", { name: "Sign in" })).toBeNull();
+  });
+
   it("shows the publication date", () => {
     render(<IdeaDetail idea={idea} />);
 

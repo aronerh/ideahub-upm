@@ -107,3 +107,37 @@ begin;
 select tests.act_as_visitor();
 select tests.expect_rows($sql$ select * from public.idea_details(gen_random_uuid()) $sql$, 0);
 rollback;
+
+-- IH-40: the solution can be private on its own: a visitor sees the problem but not the solution.
+begin;
+select tests.add_private_problem_idea();
+update public.ideas set problem_private = false, solution_private = true;
+select tests.act_as_visitor();
+select tests.expect_details('Secret problem', null, null);
+rollback;
+
+-- IH-40: with both details private, a visitor still sees the title, pitch and date, and nothing else.
+begin;
+select tests.add_private_problem_idea();
+update public.ideas set solution_private = true;
+select tests.act_as_visitor();
+select tests.expect_details(null, null, null);
+rollback;
+
+-- IH-40: a signed-in reader still sees both details when both are private.
+begin;
+select tests.add_private_problem_idea();
+update public.ideas set solution_private = true;
+insert into auth.users (id, email) values ('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
+select tests.expect_details('Secret problem', 'Open solution', 'Ana');
+rollback;
+
+-- IH-40: the author can still edit a private idea after 006, and its details stay private.
+begin;
+select tests.add_private_problem_idea();
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+select tests.expect_rows($sql$ update public.ideas set problem = 'New secret problem' $sql$, 1);
+select tests.act_as_visitor();
+select tests.expect_details(null, 'Open solution', null);
+rollback;
