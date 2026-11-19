@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 // IH-11: a visitor browses published ideas without signing in.
 
@@ -38,4 +38,45 @@ test.describe("an idea that doesn't exist shows a not-found page", () => {
       await expect(page.getByRole("heading", { name: "Idea not found" })).toBeVisible();
     });
   }
+});
+
+// IH-40: on the live database, visitors never see the team; signed-in users see every detail.
+// Skips while the shared database has no ideas, like the test above.
+async function openFirstIdea(page: Page) {
+  await page.goto("/");
+  const list = page.getByRole("list", { name: "Published ideas" });
+  await expect(list.or(page.getByText("No ideas yet"))).toBeVisible();
+  test.skip(!(await list.isVisible()), "No ideas published yet.");
+
+  await list.getByRole("link").first().click();
+  await expect(page).toHaveURL(/\/ideas\/[0-9a-f-]{36}$/);
+  return page.getByRole("article");
+}
+
+test("a visitor sees the team members locked, with a sign-in button", async ({ page }) => {
+  const article = await openFirstIdea(page);
+
+  const team = article.getByRole("heading", { level: 2, name: "Team members" }).locator("..");
+  await expect(team).toContainText("Only UPM students and investors can read this.");
+  await expect(team.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/sign-in");
+});
+
+test("a signed-in user sees every detail, with nothing locked", async ({ page }) => {
+  const testUserEmail = process.env.E2E_USER_EMAIL;
+  const testUserPassword = process.env.E2E_USER_PASSWORD;
+  test.skip(
+    !testUserEmail || !testUserPassword,
+    "Set E2E_USER_EMAIL and E2E_USER_PASSWORD to run this test.",
+  );
+
+  await page.goto("/sign-in");
+  await page.getByLabel("Email").fill(testUserEmail!);
+  await page.getByLabel("Password").fill(testUserPassword!);
+  await page.getByRole("main").getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL("/");
+
+  const article = await openFirstIdea(page);
+
+  await expect(article.getByRole("heading", { level: 2, name: "Team members" })).toBeVisible();
+  await expect(article).not.toContainText("Only UPM students and investors can read this.");
 });
