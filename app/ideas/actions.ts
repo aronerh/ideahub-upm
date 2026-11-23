@@ -92,11 +92,11 @@ export async function deleteIdea(ideaId: string): Promise<void> {
     );
   }
 
-  // Refresh the public idea list.
-  revalidatePath("/ideas");
+  // Refresh the public idea list, which is the home page (there is no /ideas page).
+  revalidatePath("/");
 
   // Send the student back to the list.
-  redirect("/ideas");
+  redirect("/");
 }
 
 
