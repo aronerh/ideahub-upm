@@ -4,6 +4,7 @@ import {
   type IdeaInput,
   isIdeaId,
   readIdeaInput,
+  readIdeaVisibility,
   validateIdeaInput,
 } from "@/lib/ideas/ideas";
 
@@ -102,6 +103,23 @@ describe("validateIdeaInput", () => {
   it("rejects a pitch longer than 140 characters", () => {
     expect(validateIdeaInput({ ...validIdea, pitch: "a".repeat(141) })).toEqual({
       pitch: "Use at most 140 characters.",
+    });
+  });
+});
+
+// IH-40: the two "Only UPM students and investors can read this" checkboxes.
+describe("readIdeaVisibility", () => {
+  it("makes a detail private only when its box is ticked", () => {
+    const formData = new FormData();
+    formData.set("problem_private", "on");
+
+    expect(readIdeaVisibility(formData)).toEqual({ problem_private: true, solution_private: false });
+  });
+
+  it("keeps both details public when no box is ticked", () => {
+    expect(readIdeaVisibility(new FormData())).toEqual({
+      problem_private: false,
+      solution_private: false,
     });
   });
 });
