@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatIdeaDate, type Idea } from "@/lib/ideas/ideas";
 import { DeleteIdeaButton } from "@/app/ideas/deleteIdeaButton";
+import { UpmBadge } from "@/app/ui/upmBadge";
 
 export function IdeaDetail({
   idea,
@@ -17,9 +18,12 @@ export function IdeaDetail({
 
   return (
     <article className="mt-6 rounded-xl border border-line bg-card p-6 shadow-lift sm:p-10">
-      <time dateTime={idea.created_at} className="text-xs text-ink-soft">
-        Published {formatIdeaDate(idea.created_at)}
-      </time>
+      <div className="flex flex-wrap items-center gap-2">
+        <time dateTime={idea.created_at} className="text-xs text-ink-soft">
+          Published {formatIdeaDate(idea.created_at)}
+        </time>
+        <UpmBadge />
+      </div>
 
       <h1 className="mt-2 font-heading text-3xl font-semibold leading-tight tracking-tight break-words sm:text-4xl">
         {idea.title}

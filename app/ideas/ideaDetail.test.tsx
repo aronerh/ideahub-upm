@@ -29,6 +29,13 @@ const idea: Idea = {
 };
 
 describe("IdeaDetail", () => {
+  // IH-72: the badge shows for visitors too, next to the publication date.
+  it("shows a UPM student badge", () => {
+    render(<IdeaDetail idea={idea} />);
+
+    expect(within(screen.getByRole("article")).getByText("UPM student")).toBeTruthy();
+  });
+
   it("shows all 5 fields", () => {
     render(<IdeaDetail idea={idea} />);
     const article = screen.getByRole("article");
