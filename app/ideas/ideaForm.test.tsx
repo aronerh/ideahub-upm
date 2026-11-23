@@ -37,6 +37,20 @@ describe("IdeaForm", () => {
     }
   });
 
+  // IH-14
+  it("asks for a sector and a stage, with nothing picked yet", () => {
+    render(<IdeaForm />);
+    const sector = screen.getByRole("combobox", { name: "Sector" }) as HTMLSelectElement;
+    const stage = screen.getByRole("combobox", { name: "Stage" }) as HTMLSelectElement;
+
+    expect(sector.required).toBe(true);
+    expect(stage.required).toBe(true);
+    expect(sector.value).toBe("");
+    expect(stage.value).toBe("");
+    expect(screen.getByRole("option", { name: "Sustainability & energy" })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "Prototype · Something to show" })).toBeTruthy();
+  });
+
   it("has a publish button", () => {
     render(<IdeaForm />);
     expect(screen.getByRole("button", { name: "Publish idea" })).toBeTruthy();

@@ -24,6 +24,8 @@ const idea: Idea = {
   created_at: "2026-10-27T10:00:00Z",
   problem_private: false,
   solution_private: false,
+  sector: "health",
+  stage: "prototype",
 };
 
 describe("IdeaDetail", () => {

@@ -5,6 +5,9 @@ export type IdeaSummary = {
   title: string;
   pitch: string;
   created_at: string;
+  // IH-14: null for ideas published before sectors and stages existed.
+  sector: string | null;
+  stage: string | null;
 };
 
 // IH-38: details only signed-in users (UPM students and investors) can read.
@@ -61,7 +64,8 @@ export function readIdeaVisibility(formData: FormData): IdeaVisibility {
   };
 }
 
-export type IdeaFieldErrors = Partial<Record<keyof IdeaInput, string>>;
+// IH-14: sector and stage get their errors here too, next to the 5 fields.
+export type IdeaFieldErrors = Partial<Record<keyof IdeaInput | "sector" | "stage", string>>;
 
 // IH-24: what each field says when it's left empty.
 const emptyFieldErrors: Record<keyof IdeaInput, string> = {
@@ -86,8 +90,6 @@ export function validateIdeaInput(values: IdeaInput): IdeaFieldErrors | null {
   }
   return Object.keys(fieldErrors).length > 0 ? fieldErrors : null;
 }
-
-export const ideaSummaryColumns = "id, title, pitch, created_at";
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

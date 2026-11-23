@@ -9,6 +9,7 @@ import {
   updateIdea,
 } from "@/app/ideas/actions";
 
+import { ClassificationFields } from "@/app/ideas/classificationFields";
 import { ArrowIcon } from "@/app/ui/arrowIcon";
 import { FormField } from "@/app/ui/formField";
 
@@ -17,6 +18,7 @@ import {
   type IdeaInput,
   ideaFieldMaxLength as maxLength,
 } from "@/lib/ideas/ideas";
+import { type IdeaClassification, isSector, isStage } from "@/lib/ideas/classification";
 
 export function EditIdeaForm({ idea }: { idea: Idea }) {
   // Existing values used to pre-fill the form. Only the author opens this page,
@@ -29,16 +31,23 @@ export function EditIdeaForm({ idea }: { idea: Idea }) {
     team_members: idea.team_members ?? "",
   };
 
+  // IH-14: ideas published before sectors and stages existed start with nothing picked.
+  const initialClassification: IdeaClassification = {
+    sector: isSector(idea.sector) ? idea.sector : "",
+    stage: isStage(idea.stage) ? idea.stage : "",
+  };
+
   // Bind the idea ID to our IH-46 server action.
   const updateAction = updateIdea.bind(null, idea.id);
 
   const [state, formAction, pending] = useActionState<
     IdeaFormState,
     FormData
-  >(updateAction, { values: initialValues });
+  >(updateAction, { values: initialValues, classification: initialClassification });
 
   // Keep the student's edited values after validation errors.
   const values = state.values ?? initialValues;
+  const classification = state.classification ?? initialClassification;
   const errors = state.fieldErrors;
 
   return (
@@ -75,6 +84,8 @@ export function EditIdeaForm({ idea }: { idea: Idea }) {
         defaultValue={values.pitch}
         error={errors?.pitch}
       />
+
+      <ClassificationFields values={classification} errors={errors} />
 
       <FormField
         name="problem"

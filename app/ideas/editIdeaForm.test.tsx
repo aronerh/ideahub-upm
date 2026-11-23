@@ -38,6 +38,8 @@ const idea: Idea = {
   created_at: "2026-10-27T10:00:00Z",
   problem_private: false,
   solution_private: false,
+  sector: "health",
+  stage: "prototype",
 };
 
 describe("EditIdeaForm", () => {
@@ -67,6 +69,18 @@ describe("EditIdeaForm", () => {
         (field as HTMLInputElement | HTMLTextAreaElement).value
       ).toBe(value);
     }
+  });
+
+  // IH-14
+  it("pre-fills the sector and stage, or leaves them to pick for older ideas", () => {
+    const { unmount } = render(<EditIdeaForm idea={idea} />);
+    expect((screen.getByRole("combobox", { name: "Sector" }) as HTMLSelectElement).value).toBe("health");
+    expect((screen.getByRole("combobox", { name: "Stage" }) as HTMLSelectElement).value).toBe("prototype");
+    unmount();
+
+    render(<EditIdeaForm idea={{ ...idea, sector: null, stage: null }} />);
+    expect((screen.getByRole("combobox", { name: "Sector" }) as HTMLSelectElement).value).toBe("");
+    expect((screen.getByRole("combobox", { name: "Stage" }) as HTMLSelectElement).value).toBe("");
   });
 
   it("uses the correct length limits", () => {

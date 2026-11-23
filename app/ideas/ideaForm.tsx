@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { type IdeaFormState, publishIdea } from "@/app/ideas/actions";
+import { ClassificationFields } from "@/app/ideas/classificationFields";
 import { ArrowIcon } from "@/app/ui/arrowIcon";
 import { FormField } from "@/app/ui/formField";
 import { ideaFieldMaxLength as maxLength } from "@/lib/ideas/ideas";
@@ -37,6 +38,7 @@ export function IdeaForm() {
         defaultValue={values?.pitch}
         error={errors?.pitch}
       />
+      <ClassificationFields values={state.classification} errors={errors} />
       <FormField
         name="problem"
         label="Problem"

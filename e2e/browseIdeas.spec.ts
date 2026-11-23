@@ -80,3 +80,25 @@ test("a signed-in user sees every detail, with nothing locked", async ({ page })
   await expect(article.getByRole("heading", { level: 2, name: "Team members" })).toBeVisible();
   await expect(article).not.toContainText("Only UPM students and investors can read this.");
 });
+
+// IH-14: works with any ideas in the database, since nothing matches this word.
+test("a search that matches nothing says so and can be cleared", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("searchbox", { name: "Search ideas" }).fill("zzqxnomatchzzqx");
+  await page.getByRole("button", { name: "Search" }).click();
+
+  await expect(page).toHaveURL(/q=zzqxnomatchzzqx/);
+  await expect(page.getByText("No ideas match")).toBeVisible();
+
+  await page.getByRole("link", { name: "Clear search and filters" }).click();
+  await expect(page.getByRole("searchbox", { name: "Search ideas" })).toHaveValue("");
+  await expect(page.getByText("No ideas match")).toHaveCount(0);
+});
+
+test("picking a stage filter puts it in the address", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Stage" }).selectOption("prototype");
+
+  await expect(page).toHaveURL(/stage=prototype/);
+  await expect(page.getByRole("combobox", { name: "Stage" })).toHaveValue("prototype");
+});

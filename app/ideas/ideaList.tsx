@@ -1,9 +1,23 @@
 import Link from "next/link";
 import { ArrowIcon } from "@/app/ui/arrowIcon";
+import { sectorLabel, stageLabel } from "@/lib/ideas/classification";
 import { formatIdeaDate, type IdeaSummary } from "@/lib/ideas/ideas";
 
 // Renders ideas in the order given; listIdeas() already sorts them newest first.
-export function IdeaList({ ideas }: { ideas: IdeaSummary[] }) {
+// filtering: a search or filter is on, so an empty list means nothing matched (IH-14).
+export function IdeaList({ ideas, filtering = false }: { ideas: IdeaSummary[]; filtering?: boolean }) {
+  if (ideas.length === 0 && filtering) {
+    return (
+      <div role="status" className="rounded-xl border border-dashed border-line bg-card px-6 py-16 text-center">
+        <p className="font-heading text-xl font-semibold tracking-tight">No ideas match</p>
+        <p className="mt-1 text-sm text-ink-soft">Try other words, or another sector or stage.</p>
+        <Link href="/" className="mt-5 inline-block text-sm font-semibold text-accent hover:underline">
+          Clear search and filters
+        </Link>
+      </div>
+    );
+  }
+
   if (ideas.length === 0) {
     return (
       <div role="status" className="rounded-xl border border-dashed border-line bg-card px-6 py-16 text-center">
@@ -34,6 +48,7 @@ export function IdeaList({ ideas }: { ideas: IdeaSummary[] }) {
               {idea.title.charAt(0).toUpperCase()}
             </span>
             <div className="flex min-w-0 flex-1 flex-col">
+              <Classification sector={idea.sector} stage={idea.stage} />
               <h2 className="font-heading text-xl font-semibold leading-snug tracking-tight break-words">
                 {idea.title}
               </h2>
@@ -50,6 +65,13 @@ export function IdeaList({ ideas }: { ideas: IdeaSummary[] }) {
       ))}
     </ul>
   );
+}
+
+// IH-14: "Health · Prototype" above the title; nothing for ideas published before sectors existed.
+function Classification({ sector, stage }: { sector: string | null; stage: string | null }) {
+  const parts = [sectorLabel(sector), stageLabel(stage)].filter(Boolean);
+  if (parts.length === 0) return null;
+  return <p className="mb-1 text-xs font-semibold text-accent">{parts.join(" · ")}</p>;
 }
 
 export function IdeaListSkeleton() {
