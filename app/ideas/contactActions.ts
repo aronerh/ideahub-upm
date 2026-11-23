@@ -1,5 +1,6 @@
 "use server";
 
+import { refresh } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/currentUser";
@@ -63,4 +64,22 @@ export async function requestContact(
   });
 
   return { sent: true };
+}
+
+// IH-97: the author opened the idea page that lists its requests, so they are read now.
+// RLS (008) only lets the idea's author do this; for anyone else it changes nothing.
+export async function markContactRequestsRead(ideaId: string): Promise<void> {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("contact_requests")
+    .update({ read_at: new Date().toISOString() })
+    .eq("idea_id", ideaId)
+    .is("read_at", null);
+
+  // Refresh so the header badge drops the count. If saving failed, the badge stays
+  // and the next visit tries again.
+  if (!error) refresh();
 }

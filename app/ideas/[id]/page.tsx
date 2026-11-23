@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ContactRequests } from "@/app/ideas/contactRequests";
+import { MarkRequestsRead } from "@/app/ideas/markRequestsRead";
 import { IdeaDetail, IdeaDetailSkeleton } from "@/app/ideas/ideaDetail";
 import { BackLink } from "@/app/ui/backLink";
 import { getCurrentUser } from "@/lib/auth/currentUser";
@@ -45,6 +46,7 @@ if (!idea) notFound();
       )}
       <IdeaDetail idea={idea} isOwner={isOwner} />
       {contactRequests && <ContactRequests requests={contactRequests} />}
+      {contactRequests?.some((request) => request.read_at === null) && <MarkRequestsRead ideaId={idea.id} />}
       {!isOwner && <ContactFormComponent ideaId={idea.id} signedIn={!!user} />}
 
     </>
