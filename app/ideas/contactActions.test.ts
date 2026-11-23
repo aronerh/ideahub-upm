@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { requestContact } from "@/app/ideas/contactActions";
+import { refresh } from "next/cache";
+import { markContactRequestsRead, requestContact } from "@/app/ideas/contactActions";
 import { getCurrentUser } from "@/lib/auth/currentUser";
 import { notifyTeam } from "@/lib/contact/notifyTeam";
 import { createClient } from "@/lib/supabase/server";
@@ -9,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 vi.mock("@/lib/auth/currentUser", () => ({ getCurrentUser: vi.fn() }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: vi.fn() }));
 vi.mock("@/lib/contact/notifyTeam", () => ({ notifyTeam: vi.fn() }));
+vi.mock("next/cache", () => ({ refresh: vi.fn() }));
 const request = vi.hoisted(() => ({ origin: "https://preview.example" as string | null }));
 vi.mock("next/headers", () => ({
   headers: async () => new Headers(request.origin ? { origin: request.origin } : {}),
@@ -26,6 +28,11 @@ const authorId = "author-1";
 let idea: { id: string; title: string; author_id: string } | null;
 let insertError: { message: string } | null;
 const insert = vi.fn();
+// IH-98: update(...).eq("idea_id", id).is("read_at", null), recorded step by step.
+let updateError: { message: string } | null;
+const update = vi.fn();
+const updateEq = vi.fn();
+const updateIs = vi.fn();
 
 function formWith(values: Record<string, string>) {
   const formData = new FormData();
@@ -45,11 +52,15 @@ beforeEach(() => {
   idea ={ id: ideaId, title: "Study room finder", author_id: authorId };
   insertError = null;
   insert.mockImplementation(async () => ({ error: insertError }));
+  updateError = null;
+  updateIs.mockImplementation(async () => ({ error: updateError }));
+  updateEq.mockReturnValue({ is: updateIs });
+  update.mockReturnValue({ eq: updateEq });
   vi.mocked(createClient).mockResolvedValue({
     from: (table: string) =>
       table === "ideas"
         ? { select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: idea }) }) }) }
-        : { insert },
+        : { insert, update },
   } as unknown as Awaited<ReturnType<typeof createClient>>);
   vi.mocked(notifyTeam).mockResolvedValue("sent");
   signInAs("investor-1");
@@ -129,5 +140,38 @@ describe("requestContact", () => {
     const state = await requestContact({}, formWith({ idea_id: ideaId, message: "Hi" }));
 
     expect(state).toEqual({ sent: true });
+  });
+});
+
+// IH-98: opening the idea page marks its contact requests as read.
+describe("markContactRequestsRead", () => {
+  it("marks the idea's unread requests as read and refreshes the page for the badge", async () => {
+    signInAs(authorId, "ana@alumnos.upm.es");
+
+    await markContactRequestsRead(ideaId);
+
+    expect(update).toHaveBeenCalledWith({ read_at: expect.any(String) });
+    expect(Number.isNaN(Date.parse(update.mock.calls[0][0].read_at))).toBe(false);
+    expect(updateEq).toHaveBeenCalledWith("idea_id", ideaId);
+    expect(updateIs).toHaveBeenCalledWith("read_at", null);
+    expect(refresh).toHaveBeenCalled();
+  });
+
+  it("does nothing for a visitor", async () => {
+    signInAs(null);
+
+    await markContactRequestsRead(ideaId);
+
+    expect(update).not.toHaveBeenCalled();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it("doesn't refresh when saving fails, so the badge stays for the next visit", async () => {
+    signInAs(authorId, "ana@alumnos.upm.es");
+    updateError = { message: "permission denied" };
+
+    await markContactRequestsRead(ideaId);
+
+    expect(refresh).not.toHaveBeenCalled();
   });
 });
