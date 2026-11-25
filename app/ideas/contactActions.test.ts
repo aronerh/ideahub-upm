@@ -162,6 +162,28 @@ describe("requestContact", () => {
 
     expect(state).toEqual({ sent: true });
   });
+
+  it("returns exact investor detail errors and preserves what was typed", async () => {
+    const state = await requestContact(
+      {},
+      formWith({
+        idea_id: ideaId,
+        investor_name: "",
+        investor_organisation: "",
+        message: "Hi",
+      }),
+    );
+
+    expect(state).toEqual({
+      investorName: "",
+      investorNameError: "Write your name.",
+      investorOrganisation: "",
+      investorOrganisationError: "Write the organisation you represent.",
+      message: "Hi",
+      messageError: undefined,
+    });
+    expect(insert).not.toHaveBeenCalled();
+  });
 });
 
 // IH-98: opening the idea page marks its contact requests as read.

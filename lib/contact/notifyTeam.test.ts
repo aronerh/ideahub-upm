@@ -106,4 +106,14 @@ describe("contactEmailText", () => {
     expect(text).toContain("I'd like to fund this.");
     expect(text).toContain("https://ideahub-upm.vercel.app/ideas/abc");
   });
+
+  it("uses the shared fallback for legacy investor details", () => {
+    const text = contactEmailText({
+      ...notification,
+      investorName: null,
+      investorOrganisation: "   ",
+    });
+
+    expect(text).toContain("Not provided (Not provided)");
+  });
 });
