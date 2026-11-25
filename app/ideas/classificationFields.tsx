@@ -1,3 +1,4 @@
+import { ChevronIcon } from "@/app/ui/chevronIcon";
 import { type IdeaClassification, sectors, stages } from "@/lib/ideas/classification";
 
 // IH-14: sector and stage, side by side, in the publish and edit forms. Investors filter by them.
@@ -53,17 +54,20 @@ function SelectField({
       <label htmlFor={name} className="text-sm font-medium text-ink">
         {label}
       </label>
-      <select
-        id={name}
-        name={name}
-        required
-        defaultValue={defaultValue ?? ""}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : undefined}
-        className="rounded-lg border border-line bg-page px-3 py-2 text-[0.9375rem] text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 aria-invalid:border-danger"
-      >
-        {children}
-      </select>
+      <div className="relative text-ink">
+        <select
+          id={name}
+          name={name}
+          required
+          defaultValue={defaultValue ?? ""}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? errorId : undefined}
+          className="w-full cursor-pointer appearance-none rounded-lg border border-line bg-page py-2 pr-9 pl-3 text-[0.9375rem] text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 aria-invalid:border-danger"
+        >
+          {children}
+        </select>
+        <ChevronIcon />
+      </div>
       {error && (
         <p id={errorId} className="text-xs text-danger">
           {error}
