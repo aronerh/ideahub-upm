@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowIcon } from "@/app/ui/arrowIcon";
 import { sectorLabel, stageLabel } from "@/lib/ideas/classification";
+import { UpmBadge } from "@/app/ui/upmBadge";
 import { formatIdeaDate, type IdeaSummary } from "@/lib/ideas/ideas";
 
 // Renders ideas in the order given; listIdeas() already sorts them newest first.
@@ -54,9 +55,12 @@ export function IdeaList({ ideas, filtering = false }: { ideas: IdeaSummary[]; f
               </h2>
               <p className="mt-1 flex-1 text-ink-soft break-words">{idea.pitch}</p>
               <div className="mt-4 flex items-center justify-between">
-                <time dateTime={idea.created_at} className="text-[0.8125rem] tabular-nums text-ink-soft">
-                  {formatIdeaDate(idea.created_at)}
-                </time>
+                <div className="flex items-center gap-2">
+                  <time dateTime={idea.created_at} className="text-[0.8125rem] tabular-nums text-ink-soft">
+                    {formatIdeaDate(idea.created_at)}
+                  </time>
+                  <UpmBadge />
+                </div>
                 <ArrowIcon className="h-4.5 w-4.5 text-accent opacity-0 transition-[opacity,translate] duration-[180ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-0.5 group-hover:opacity-100 group-focus-visible:translate-x-0.5 group-focus-visible:opacity-100 motion-reduce:transition-none" />
               </div>
             </div>

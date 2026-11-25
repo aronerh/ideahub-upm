@@ -42,6 +42,16 @@ describe("IdeaList", () => {
     expect(screen.queryByText("No ideas yet")).toBeNull();
   });
 
+  // IH-72: every author published with a UPM email, so every card says so.
+  it("shows a UPM student badge on every idea", () => {
+    render(<IdeaList ideas={ideas} />);
+    const items = within(screen.getByRole("list", { name: "Published ideas" })).getAllByRole("listitem");
+
+    for (const item of items) {
+      expect(within(item).getByText("UPM student")).toBeTruthy();
+    }
+  });
+
   it("shows title, pitch and date for each idea, in the order given", () => {
     render(<IdeaList ideas={ideas} />);
     const items = within(screen.getByRole("list", { name: "Published ideas" })).getAllByRole("listitem");
