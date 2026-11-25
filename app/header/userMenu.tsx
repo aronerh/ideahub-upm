@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { AccountMenu } from "@/app/header/accountMenu";
+import { RequestsBadge } from "@/app/header/requestsBadge";
 import { getCurrentUser } from "@/lib/auth/currentUser";
+import { listUnreadContactRequests } from "@/lib/contact/queries";
 
 export async function UserMenu() {
   const user = await getCurrentUser();
   const publishHref = user ? "/ideas/new" : "/sign-in";
+  // IH-97: the header is on every page, so a failed count hides the badge instead of breaking the page.
+  const unread = user ? await listUnreadContactRequests(user.id).catch(() => []) : [];
 
   return (
     <>
@@ -19,6 +23,7 @@ export async function UserMenu() {
       >
         Publish<span className="hidden sm:inline"> an idea</span>
       </Link>
+      {unread.length > 0 && <RequestsBadge count={unread.length} ideaId={unread[0].idea_id} />}
       {user && <AccountMenu email={user.email} />}
     </>
   );

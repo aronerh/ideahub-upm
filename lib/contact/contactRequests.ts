@@ -6,10 +6,12 @@ export type ContactRequest = {
   requester_email: string;
   message: string;
   created_at: string;
+  // IH-96: null until the author has seen the request.
+  read_at: string | null;
 };
 
 // Columns IH-43 can show to the idea's team.
-export const contactRequestColumns = "id, idea_id, requester_email, message, created_at";
+export const contactRequestColumns = "id, idea_id, requester_email, message, created_at, read_at";
 
 // What the "Contact the team" form (IH-41) sends: the idea and the investor's message.
 export type ContactInput = {

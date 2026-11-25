@@ -12,6 +12,7 @@ const requests: ContactRequest[] = [
     requester_email: "laura@investor.com",
     message: "I'd like to hear more.\nAre you free next week?",
     created_at: "2026-11-10T09:00:00Z",
+    read_at: null,
   },
   {
     id: "00000000-0000-4000-8000-000000000003",
@@ -19,6 +20,7 @@ const requests: ContactRequest[] = [
     requester_email: "pablo@fund.es",
     message: "Interesting idea.",
     created_at: "2026-11-08T09:00:00Z",
+    read_at: "2026-11-09T09:00:00Z",
   },
 ];
 

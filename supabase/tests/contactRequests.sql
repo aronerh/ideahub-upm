@@ -124,7 +124,8 @@ insert into public.contact_requests (idea_id, requester_id, requester_email, mes
 values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b',
   'bob@gmail.com', 'Hello');
 select tests.sign_in_as('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
-select tests.expect_rows($sql$ update public.contact_requests set message = 'Changed' $sql$, 0);
+-- Only read_at can be updated (008), so changing the message is refused outright.
+select tests.expect_error($sql$ update public.contact_requests set message = 'Changed' $sql$, '42501');
 select tests.expect_rows($sql$ delete from public.contact_requests $sql$, 0);
 select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
 select tests.expect_rows($sql$ delete from public.contact_requests $sql$, 0);
@@ -171,4 +172,91 @@ do $$ begin
     raise exception 'Requests should go with their idea';
   end if;
 end $$;
+rollback;
+
+-- ============================================================
+-- IH-96: read status (008_contact_request_read.sql)
+-- ============================================================
+
+-- Ana's idea with one request from Bob, not read yet.
+create function tests.add_unread_request() returns void
+language sql
+as $$
+  insert into auth.users (id, email) values
+    ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es'),
+    ('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com'),
+    ('00000000-0000-0000-0000-00000000000c', 'carla@upm.es');
+  insert into public.ideas (id, author_id, title, pitch, problem, solution, team_members)
+  values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a',
+    'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+  insert into public.contact_requests (idea_id, requester_id, requester_email, message)
+  values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b',
+    'bob@gmail.com', 'Hello');
+$$;
+
+-- A new request starts unread.
+begin;
+select tests.add_unread_request();
+do $$ begin
+  if (select read_at from public.contact_requests) is not null then
+    raise exception 'A new request should be unread';
+  end if;
+end $$;
+rollback;
+
+-- The idea's author can mark the request as read.
+begin;
+select tests.add_unread_request();
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+select tests.expect_rows($sql$ update public.contact_requests set read_at = now() where read_at is null $sql$, 1);
+select tests.expect_rows($sql$ select 1 from public.contact_requests where read_at is null $sql$, 0);
+rollback;
+
+-- The sender and other users can't mark it as read.
+begin;
+select tests.add_unread_request();
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
+select tests.expect_rows($sql$ update public.contact_requests set read_at = now() $sql$, 0);
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000c', 'carla@upm.es');
+select tests.expect_rows($sql$ update public.contact_requests set read_at = now() $sql$, 0);
+reset role;
+do $$ begin
+  if (select read_at from public.contact_requests) is not null then
+    raise exception 'Only the author should be able to mark a request as read';
+  end if;
+end $$;
+rollback;
+
+-- A visitor can't mark it as read.
+begin;
+select tests.add_unread_request();
+select tests.act_as_visitor();
+select tests.expect_error($sql$ update public.contact_requests set read_at = now() $sql$, '42501');
+rollback;
+
+-- The author can only change read_at, not the message or who sent it.
+begin;
+select tests.add_unread_request();
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+select tests.expect_error($sql$ update public.contact_requests set message = 'Changed' $sql$, '42501');
+select tests.expect_error($sql$ update public.contact_requests set requester_email = 'x@x.com' $sql$, '42501');
+rollback;
+
+-- A sender can't send a request that is already marked as read.
+begin;
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es'),
+  ('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
+insert into public.ideas (id, author_id, title, pitch, problem, solution, team_members)
+values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a',
+  'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
+select tests.expect_error($sql$
+  insert into public.contact_requests (idea_id, message, read_at)
+  values ('10000000-0000-0000-0000-000000000001', 'Hello', now())
+$sql$, '42501');
+select tests.expect_rows($sql$
+  insert into public.contact_requests (idea_id, message)
+  values ('10000000-0000-0000-0000-000000000001', 'Hello')
+$sql$, 1);
 rollback;
