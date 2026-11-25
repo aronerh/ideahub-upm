@@ -38,6 +38,7 @@ const idea: Idea = {
   created_at: "2026-10-27T10:00:00Z",
   problem_private: false,
   solution_private: false,
+  team_private: true,
   sector: "health",
   stage: "prototype",
 };

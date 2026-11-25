@@ -22,8 +22,10 @@ export type Idea = IdeaSummary & IdeaVisibility & {
   // IH-38: null when the reader isn't signed in and the detail is private.
   problem: string | null;
   solution: string | null;
-  // IH-38: null for visitors who aren't signed in.
+  // IH-93: null when the reader isn't signed in and the team is private.
   team_members: string | null;
+  // IH-93: true unless the student made the team public; existing ideas stay private.
+  team_private: boolean;
 };
 
 // The 5 fields a student fills in (IH-10).
