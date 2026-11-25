@@ -85,7 +85,7 @@ test("a signed-in user sees every detail, with nothing locked", async ({ page })
 test("a search that matches nothing says so and can be cleared", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("searchbox", { name: "Search ideas" }).fill("zzqxnomatchzzqx");
-  await page.getByRole("button", { name: "Search" }).click();
+  await page.getByRole("searchbox", { name: "Search ideas" }).press("Enter");
 
   await expect(page).toHaveURL(/q=zzqxnomatchzzqx/);
   await expect(page.getByText("No ideas match")).toBeVisible();
@@ -97,8 +97,9 @@ test("a search that matches nothing says so and can be cleared", async ({ page }
 
 test("picking a stage filter puts it in the address", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("combobox", { name: "Stage" }).selectOption("prototype");
+  const stages = page.getByRole("navigation", { name: "Stage" });
+  await stages.getByRole("link", { name: "Prototype" }).click();
 
   await expect(page).toHaveURL(/stage=prototype/);
-  await expect(page.getByRole("combobox", { name: "Stage" })).toHaveValue("prototype");
+  await expect(stages.getByRole("link", { name: "Prototype" })).toHaveAttribute("aria-current", "true");
 });
