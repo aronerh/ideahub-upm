@@ -10,6 +10,8 @@ const requests: ContactRequest[] = [
     id: "00000000-0000-4000-8000-000000000002",
     idea_id: "00000000-0000-4000-8000-000000000001",
     requester_email: "laura@investor.com",
+    investor_name: "Laura Investor",
+    investor_organisation: "North Capital",
     message: "I'd like to hear more.\nAre you free next week?",
     created_at: "2026-11-10T09:00:00Z",
     read_at: null,
@@ -18,6 +20,8 @@ const requests: ContactRequest[] = [
     id: "00000000-0000-4000-8000-000000000003",
     idea_id: "00000000-0000-4000-8000-000000000001",
     requester_email: "pablo@fund.es",
+    investor_name: null,
+    investor_organisation: "",
     message: "Interesting idea.",
     created_at: "2026-11-08T09:00:00Z",
     read_at: "2026-11-09T09:00:00Z",
@@ -32,8 +36,11 @@ describe("ContactRequests", () => {
     expect(items).toHaveLength(2);
     expect(items[0].textContent).toContain("laura@investor.com");
     expect(items[0].textContent).toContain("10 Nov 2026");
+    expect(items[0].textContent).toContain("Laura Investor");
+    expect(items[0].textContent).toContain("North Capital");
     expect(items[0].textContent).toContain("Are you free next week?");
     expect(items[1].textContent).toContain("pablo@fund.es");
+    expect(items[1].textContent).toContain("Not provided");
   });
 
   it("links each email so the team can reply", () => {

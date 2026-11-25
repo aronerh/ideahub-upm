@@ -4,14 +4,24 @@ export type ContactRequest = {
   id: string;
   idea_id: string;
   requester_email: string;
+  investor_name: string | null;
+  investor_organisation: string | null;
   message: string;
   created_at: string;
   // IH-96: null until the author has seen the request.
   read_at: string | null;
 };
 
+// Legacy requests have null values for these fields.
+export const investorDetailsFallback = "Not provided";
+export function formatInvestorDetail(value: string | null | undefined): string {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : investorDetailsFallback;
+}
+
 // Columns IH-43 can show to the idea's team.
-export const contactRequestColumns = "id, idea_id, requester_email, message, created_at, read_at";
+export const contactRequestColumns =
+  "id, idea_id, requester_email, investor_name, investor_organisation, message, created_at, read_at";
 
 // What the "Contact the team" form (IH-41) sends: the idea and the investor's message.
 export type ContactInput = {

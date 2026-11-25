@@ -11,6 +11,8 @@ const notification: ContactNotification = {
   ideaTitle: "Study room finder",
   ideaUrl: "https://ideahub-upm.vercel.app/ideas/abc",
   requesterEmail: "bob@gmail.com",
+  investorName: "Bob Investor",
+  investorOrganisation: "Example Ventures",
   message: "I'd like to fund this.",
 };
 
@@ -98,6 +100,8 @@ describe("contactEmailText", () => {
     const text = contactEmailText(notification);
 
     expect(text).toContain("bob@gmail.com");
+    expect(text).toContain("Bob Investor");
+    expect(text).toContain("Example Ventures");
     expect(text).toContain("“Study room finder”");
     expect(text).toContain("I'd like to fund this.");
     expect(text).toContain("https://ideahub-upm.vercel.app/ideas/abc");

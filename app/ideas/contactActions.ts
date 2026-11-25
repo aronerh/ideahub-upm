@@ -97,6 +97,8 @@ export async function requestContact(
     ideaTitle: idea.title,
     ideaUrl: `${origin}/ideas/${idea.id}`,
     requesterEmail: user.email,
+    investorName: investor_name,
+    investorOrganisation: investor_organisation,
     message,
   });
 

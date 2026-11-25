@@ -1,4 +1,4 @@
-import type { ContactRequest } from "@/lib/contact/contactRequests";
+import { formatInvestorDetail, type ContactRequest } from "@/lib/contact/contactRequests";
 import { formatIdeaDate } from "@/lib/ideas/ideas";
 
 // IH-43: the idea's author sees who asked to contact the team, newest first.
@@ -29,6 +29,13 @@ export function ContactRequests({ requests }: { requests: ContactRequest[] }) {
                 <time dateTime={request.created_at} className="text-xs text-ink-soft">
                   {formatIdeaDate(request.created_at)}
                 </time>
+              </div>
+              <div className="mt-2 text-sm text-ink-soft">
+                <span className="font-medium text-ink">
+                  {formatInvestorDetail(request.investor_name)}
+                </span>
+                {" · "}
+                <span>{formatInvestorDetail(request.investor_organisation)}</span>
               </div>
               <p className="mt-2 max-w-prose whitespace-pre-line break-words leading-relaxed">
                 {request.message}
