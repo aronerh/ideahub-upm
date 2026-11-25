@@ -5,7 +5,7 @@ import { type IdeaFormState, publishIdea } from "@/app/ideas/actions";
 import { ClassificationFields } from "@/app/ideas/classificationFields";
 import { ArrowIcon } from "@/app/ui/arrowIcon";
 import { FormField } from "@/app/ui/formField";
-import { ideaFieldMaxLength as maxLength } from "@/lib/ideas/ideas";
+import { ideaFieldMaxLength as maxLength, privateDetailNotice } from "@/lib/ideas/ideas";
 
 export function IdeaForm() {
   const [state, formAction, pending] = useActionState<IdeaFormState, FormData>(publishIdea, {});
@@ -89,7 +89,7 @@ function PrivateCheckbox({ name, defaultChecked }: { name: string; defaultChecke
   return (
     <label className="mt-2 flex items-center gap-2 text-sm text-ink-soft">
       <input type="checkbox" name={name} defaultChecked={defaultChecked} className="h-4 w-4 accent-accent" />
-      Only UPM students and investors can read this
+      {privateDetailNotice}
     </label>
   );
 }

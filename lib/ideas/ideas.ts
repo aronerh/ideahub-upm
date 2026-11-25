@@ -10,7 +10,10 @@ export type IdeaSummary = {
   stage: string | null;
 };
 
-// IH-38: details only signed-in users (UPM students and investors) can read.
+// IH-38: details only signed-in users can read. Anyone can sign up, so the wording says who exactly (IH-13).
+// The publish form's checkbox and the locked section both use this sentence.
+export const privateDetailNotice = "Anyone with an IdeaHub account can read this";
+
 export type IdeaVisibility = {
   problem_private: boolean;
   solution_private: boolean;

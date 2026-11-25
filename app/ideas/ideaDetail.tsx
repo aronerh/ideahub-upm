@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatIdeaDate, type Idea } from "@/lib/ideas/ideas";
+import { formatIdeaDate, privateDetailNotice, type Idea } from "@/lib/ideas/ideas";
 import { DeleteIdeaButton } from "@/app/ideas/deleteIdeaButton";
 import { UpmBadge } from "@/app/ui/upmBadge";
 
@@ -45,7 +45,7 @@ export function IdeaDetail({
           {section.body === null ? (
             <div className="mt-2 flex flex-wrap items-center gap-3">
               <p className="text-sm text-ink-soft">
-                Only UPM students and investors can read this.
+                {privateDetailNotice}.
               </p>
               <Link
                 href="/sign-in"
