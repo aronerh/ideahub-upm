@@ -103,6 +103,18 @@ describe("EditIdeaForm", () => {
     }
   });
 
+  // IH-95: the three privacy boxes start as the student last saved them.
+  it("ticks the privacy boxes the student saved", () => {
+    render(<EditIdeaForm idea={{ ...idea, problem_private: true, solution_private: false, team_private: false }} />);
+    const boxes = screen.getAllByRole("checkbox", { name: "Anyone with an IdeaHub account can read this" });
+
+    expect(boxes.map((box) => [box.getAttribute("name"), (box as HTMLInputElement).checked])).toEqual([
+      ["problem_private", true],
+      ["solution_private", false],
+      ["team_private", false],
+    ]);
+  });
+
   it("shows a Save changes button", () => {
     render(<EditIdeaForm idea={idea} />);
 

@@ -86,6 +86,18 @@ describe("IdeaDetail", () => {
     expect(within(article).queryByRole("link", { name: "Sign in" })).toBeNull();
   });
 
+  // IH-95: the database sends a public team to visitors too, so it shows without a lock.
+  it("shows a public team to a visitor while a private problem stays locked", () => {
+    render(<IdeaDetail idea={{ ...idea, problem: null, problem_private: true, team_private: false }} />);
+    const article = screen.getByRole("article");
+    const team = within(article).getByRole("heading", { level: 2, name: "Team members" }).parentElement!;
+    const problem = within(article).getByRole("heading", { level: 2, name: "Problem" }).parentElement!;
+
+    expect(team.textContent).toContain(idea.team_members);
+    expect(within(team).queryByRole("link", { name: "Sign in" })).toBeNull();
+    expect(problem.textContent).toContain("Anyone with an IdeaHub account can read this.");
+  });
+
   it("shows the publication date", () => {
     render(<IdeaDetail idea={idea} />);
 

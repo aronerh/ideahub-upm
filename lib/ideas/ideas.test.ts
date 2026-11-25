@@ -116,6 +116,14 @@ describe("readIdeaVisibility", () => {
     expect(readIdeaVisibility(formData)).toEqual({ problem_private: true, solution_private: false, team_private: false });
   });
 
+  // IH-95
+  it("makes the team private only when its box is ticked", () => {
+    const formData = new FormData();
+    formData.set("team_private", "on");
+
+    expect(readIdeaVisibility(formData)).toEqual({ problem_private: false, solution_private: false, team_private: true });
+  });
+
   it("keeps every detail public when no box is ticked", () => {
     expect(readIdeaVisibility(new FormData())).toEqual({
       problem_private: false,

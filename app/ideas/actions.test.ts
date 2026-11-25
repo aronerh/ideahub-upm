@@ -175,6 +175,14 @@ describe("publishIdea", () => {
     });
   });
 
+  // IH-95
+  it("saves a hidden team when its box is ticked", async () => {
+    await expect(
+      publishIdea({}, formWith({ ...validForm, team_private: "on" })),
+    ).rejects.toThrow(`redirect:/ideas/${ideaId}?published=1`);
+    expect(insert).toHaveBeenCalledWith({ ...validForm, ...publicDetails, team_private: true });
+  });
+
   it("saves nothing and shows a message per field when the form is empty", async () => {
     const state = await publishIdea({}, new FormData());
 
@@ -259,6 +267,27 @@ describe("updateIdea", () => {
     expect(revalidatePath).toHaveBeenCalledWith(
       `/ideas/${ideaId}`
     );
+  });
+
+  // IH-95: editing saves the three privacy boxes as they are ticked now.
+  it("saves which details the student made private when editing", async () => {
+    await expect(
+      updateIdea(ideaId, {}, formWith({ ...validForm, problem_private: "on", team_private: "on" })),
+    ).rejects.toThrow(`redirect:/ideas/${ideaId}`);
+
+    expect(update).toHaveBeenCalledWith({
+      ...validForm,
+      problem_private: true,
+      solution_private: false,
+      team_private: true,
+    });
+  });
+
+  it("keeps the ticked boxes when the edit has an error", async () => {
+    const state = await updateIdea(ideaId, {}, formWith({ ...validForm, title: "", team_private: "on" }));
+
+    expect(update).not.toHaveBeenCalled();
+    expect(state.visibility).toEqual({ ...publicDetails, team_private: true });
   });
 
   it("rejects empty fields without updating", async () => {
