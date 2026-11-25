@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { requestContact, type ContactFormState } from "@/app/ideas/contactActions";
 import { FormField } from "@/app/ui/formField";
-import { contactMessageMaxLength } from "@/lib/contact/contactRequests";
+import {
+  contactMessageMaxLength,
+  investorNameMaxLength,
+  investorOrganisationMaxLength,
+} from "@/lib/contact/contactRequests";
 
 const initialState: ContactFormState = {};
 const messageHint = `1 to ${contactMessageMaxLength} characters.`;
@@ -54,6 +58,23 @@ export function ContactForm({ ideaId, signedIn }: { ideaId: string; signedIn: bo
           </p>
         )}
 
+        <FormField
+          name="investor_name"
+          label="Your name"
+          required
+          defaultValue={state.investorName}
+          maxLength={investorNameMaxLength}
+          error={state.investorNameError}
+        />
+        <FormField
+          name="investor_organisation"
+          label="Organisation"
+          placeholder="Independent"
+          required
+          defaultValue={state.investorOrganisation}
+          maxLength={investorOrganisationMaxLength}
+          error={state.investorOrganisationError}
+        />
         <FormField
           name="message"
           label="Your message"

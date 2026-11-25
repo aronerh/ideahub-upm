@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   contactMessageMaxLength,
+  investorNameMaxLength,
+  investorOrganisationMaxLength,
   readContactInput,
+  validateContactDetails,
   validateContactMessage,
 } from "@/lib/contact/contactRequests";
 
@@ -16,10 +19,22 @@ function formWith(values: Record<string, string>) {
 }
 
 describe("readContactInput", () => {
-  it("trims spaces around the idea id and the message", () => {
-    const input = readContactInput(formWith({ idea_id: "  abc  ", message: "  Let's talk.\n" }));
+  it("trims spaces around the idea id, investor details, and message", () => {
+    const input = readContactInput(
+      formWith({
+        idea_id: "  abc  ",
+        investor_name: "  Laura Investor  ",
+        investor_organisation: "  Investor Fund  ",
+        message: "  Let's talk.\n",
+      }),
+    );
 
-    expect(input).toEqual({ idea_id: "abc", message: "Let's talk." });
+    expect(input).toEqual({
+      idea_id: "abc",
+      investor_name: "Laura Investor",
+      investor_organisation: "Investor Fund",
+      message: "Let's talk.",
+    });
   });
 
   it("keeps line breaks inside the message", () => {
@@ -29,7 +44,12 @@ describe("readContactInput", () => {
   });
 
   it("reads missing fields as empty text instead of failing", () => {
-    expect(readContactInput(new FormData())).toEqual({ idea_id: "", message: "" });
+    expect(readContactInput(new FormData())).toEqual({
+      idea_id: "",
+      investor_name: "",
+      investor_organisation: "",
+      message: "",
+    });
   });
 });
 
@@ -60,5 +80,35 @@ describe("validateContactMessage", () => {
 
   it("keeps the maximum at 1000, the limit the database enforces", () => {
     expect(contactMessageMaxLength).toBe(1000);
+  });
+});
+
+describe("validateContactDetails", () => {
+  it("asks for both investor details", () => {
+    expect(validateContactDetails({ investor_name: "", investor_organisation: "" })).toEqual({
+      investorNameError: "Write your name.",
+      investorOrganisationError: "Write the organisation you represent.",
+    });
+  });
+
+  it("accepts details at the maximum lengths", () => {
+    expect(
+      validateContactDetails({
+        investor_name: "a".repeat(investorNameMaxLength),
+        investor_organisation: "a".repeat(investorOrganisationMaxLength),
+      }),
+    ).toEqual({});
+  });
+
+  it("rejects details one character over their maximum lengths", () => {
+    expect(
+      validateContactDetails({
+        investor_name: "a".repeat(investorNameMaxLength + 1),
+        investor_organisation: "a".repeat(investorOrganisationMaxLength + 1),
+      }),
+    ).toEqual({
+      investorNameError: "Use at most 100 characters.",
+      investorOrganisationError: "Use at most 120 characters.",
+    });
   });
 });
