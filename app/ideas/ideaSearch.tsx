@@ -5,6 +5,11 @@ import Link from "next/link";
 import { ChevronIcon } from "@/app/ui/chevronIcon";
 import { type IdeaSearch as Search, isFiltering, sectors, stages } from "@/lib/ideas/classification";
 
+// Search field and sector menu share one look: filled, no border, the stage control's height.
+const fieldClass =
+  // 16px on phones so iOS Safari doesn't zoom in when a field is tapped.
+  "h-10 appearance-none rounded-xl border-0 bg-ink-soft/10 text-base text-ink outline-none transition-shadow focus:ring-2 focus:ring-accent/40 sm:text-sm";
+
 // IH-14: search field, sector menu and stage segmented control above the ideas list. They combine,
 // and live in the address (/?q=&sector=&stage=), so a filtered list can be shared. Everything works
 // without JavaScript (Enter searches, stages are links); with it, picking a sector applies at once.
@@ -18,9 +23,9 @@ export function IdeaSearch({ search }: { search: Search }) {
       action="/"
       role="search"
       aria-label="Search ideas"
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-2.5 lg:flex-row lg:items-center"
     >
-      <div className="relative">
+      <div className="relative min-w-0 lg:flex-1">
         <SearchIcon />
         <label htmlFor="q" className="sr-only">
           Search ideas
@@ -33,18 +38,18 @@ export function IdeaSearch({ search }: { search: Search }) {
           maxLength={100}
           placeholder="Search ideas"
           enterKeyHint="search"
-          className="h-12 w-full appearance-none rounded-2xl border border-line bg-card pr-12 pl-11 text-base text-ink shadow-[0_1px_2px_rgb(0_0_0/0.04)] outline-none transition-shadow placeholder:text-ink-soft focus:border-accent/60 focus:ring-4 focus:ring-accent/15 [&::-webkit-search-cancel-button]:hidden"
+          className={`${fieldClass} w-full pr-10 pl-10 placeholder:text-ink-soft [&::-webkit-search-cancel-button]:hidden`}
         />
         {search.query !== "" && (
           <Link
             href={addressFor({ ...search, query: "" })}
             aria-label="Clear search"
-            className="absolute top-1/2 right-3 flex size-6 -translate-y-1/2 items-center justify-center rounded-full bg-ink-soft/25 text-ink-soft transition-colors hover:bg-ink-soft/40 hover:text-ink"
+            className="absolute top-1/2 right-2.5 flex size-5 -translate-y-1/2 items-center justify-center rounded-full bg-ink-soft/25 text-ink-soft transition-colors hover:bg-ink-soft/40 hover:text-ink"
           >
             <svg
               viewBox="0 0 12 12"
               aria-hidden="true"
-              className="size-2.5"
+              className="size-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.8"
@@ -61,8 +66,8 @@ export function IdeaSearch({ search }: { search: Search }) {
         Search
       </button>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className={`relative shrink-0 ${search.sector ? "text-on-soft" : "text-ink"}`}>
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+        <div className="relative shrink-0 text-ink">
           <label htmlFor="sector" className="sr-only">
             Sector
           </label>
@@ -71,9 +76,7 @@ export function IdeaSearch({ search }: { search: Search }) {
             name="sector"
             defaultValue={search.sector}
             onChange={applySector}
-            className={`h-9 w-full cursor-pointer appearance-none rounded-full border py-0 pr-9 pl-4 text-sm font-medium outline-none transition-colors focus-visible:ring-4 focus-visible:ring-accent/15 sm:w-auto ${
-              search.sector ? "border-transparent bg-soft text-on-soft" : "border-line bg-card text-ink hover:bg-soft/50"
-            }`}
+            className={`${fieldClass} w-full cursor-pointer pr-9 pl-3.5 font-medium sm:w-52`}
           >
             <option value="">All sectors</option>
             {sectors.map((sector) => (
@@ -85,7 +88,7 @@ export function IdeaSearch({ search }: { search: Search }) {
           <ChevronIcon />
         </div>
 
-        <nav aria-label="Stage" className="flex rounded-full bg-ink-soft/10 p-0.5">
+        <nav aria-label="Stage" className="flex h-10 shrink-0 rounded-xl bg-ink-soft/10 p-[3px]">
           {[{ value: "", label: "All" } as const, ...stages].map((stage) => {
             const current = search.stage === stage.value;
             return (
@@ -94,7 +97,7 @@ export function IdeaSearch({ search }: { search: Search }) {
                 href={addressFor({ ...search, stage: stage.value })}
                 aria-current={current ? "true" : undefined}
                 scroll={false}
-                className={`flex h-8 flex-1 items-center justify-center rounded-full px-3 text-sm whitespace-nowrap transition-all sm:flex-none ${
+                className={`flex flex-1 items-center justify-center rounded-[9px] px-3 text-sm whitespace-nowrap transition-all sm:flex-none ${
                   current
                     ? "bg-card font-semibold text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)] dark:bg-ink-soft/30 dark:shadow-none"
                     : "font-medium text-ink-soft hover:text-ink"
@@ -107,7 +110,7 @@ export function IdeaSearch({ search }: { search: Search }) {
         </nav>
 
         {isFiltering(search) && (
-          <Link href="/" className="text-sm font-medium text-accent hover:underline sm:ml-auto">
+          <Link href="/" className="px-1 text-sm font-medium whitespace-nowrap text-ink-soft hover:text-ink">
             Clear filters
           </Link>
         )}
@@ -131,7 +134,7 @@ function SearchIcon() {
     <svg
       viewBox="0 0 20 20"
       aria-hidden="true"
-      className="pointer-events-none absolute top-1/2 left-4 size-[18px] -translate-y-1/2 text-ink-soft"
+      className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-ink-soft"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.8"
