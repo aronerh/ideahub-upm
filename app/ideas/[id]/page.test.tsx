@@ -42,6 +42,7 @@ const idea: Idea = {
   created_at: "2026-10-27T10:00:00Z",
   problem_private: true,
   solution_private: true,
+  team_private: true,
   sector: "health",
   stage: "prototype",
 };
@@ -88,7 +89,7 @@ describe("IH-92: visitor preview", () => {
 
     expect(
       within(article).getAllByText(
-        "Only UPM students and investors can read this."
+        "Anyone with an IdeaHub account can read this."
       )
     ).toHaveLength(3);
   });
