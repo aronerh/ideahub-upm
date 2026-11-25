@@ -107,19 +107,20 @@ describe("validateIdeaInput", () => {
   });
 });
 
-// IH-40: the two "Anyone with an IdeaHub account can read this" checkboxes.
+// IH-40, IH-94: the "Anyone with an IdeaHub account can read this" checkboxes.
 describe("readIdeaVisibility", () => {
   it("makes a detail private only when its box is ticked", () => {
     const formData = new FormData();
     formData.set("problem_private", "on");
 
-    expect(readIdeaVisibility(formData)).toEqual({ problem_private: true, solution_private: false });
+    expect(readIdeaVisibility(formData)).toEqual({ problem_private: true, solution_private: false, team_private: false });
   });
 
-  it("keeps both details public when no box is ticked", () => {
+  it("keeps every detail public when no box is ticked", () => {
     expect(readIdeaVisibility(new FormData())).toEqual({
       problem_private: false,
       solution_private: false,
+      team_private: false,
     });
   });
 });

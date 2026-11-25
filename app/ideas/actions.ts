@@ -124,20 +124,21 @@ export async function updateIdea(
     redirect("/sign-in");
   }
 
-  // Read the five edited fields, plus sector and stage (IH-14).
+  // Read the five edited fields, plus sector and stage (IH-14) and the privacy boxes (IH-94).
   const values = readIdeaInput(formData);
+  const visibility = readIdeaVisibility(formData);
   const classification = readIdeaClassification(formData);
 
   // Check the student's UPM email.
   if (!isUpmEmail(user.email)) {
-    return { values, classification, formError: emailDomainError };
+    return { values, visibility, classification, formError: emailDomainError };
   }
 
   // Validate the edited values.
   const fieldErrors = mergeErrors(validateIdeaInput(values), validateIdeaClassification(classification));
 
   if (fieldErrors) {
-    return { values, classification, fieldErrors };
+    return { values, visibility, classification, fieldErrors };
   }
 
   // Connect to Supabase as the current user.
@@ -146,7 +147,7 @@ export async function updateIdea(
   // Only update an idea belonging to this student.
   const { data, error } = await supabase
     .from("ideas")
-    .update({ ...values, ...classification })
+    .update({ ...values, ...visibility, ...classification })
     .eq("id", ideaId)
     .eq("author_id", user.id)
     .select("id")
@@ -155,6 +156,7 @@ export async function updateIdea(
   if (error) {
     return {
       values,
+      visibility,
       classification,
       formError: "Your idea couldn't be updated. Please try again.",
     };
@@ -164,6 +166,7 @@ export async function updateIdea(
   if (!data) {
     return {
       values,
+      visibility,
       classification,
       formError: "Idea not found or you don't have permission to edit it.",
     };

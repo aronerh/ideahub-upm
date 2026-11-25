@@ -3,9 +3,10 @@
 import { useActionState } from "react";
 import { type IdeaFormState, publishIdea } from "@/app/ideas/actions";
 import { ClassificationFields } from "@/app/ideas/classificationFields";
+import { PrivateCheckbox } from "@/app/ideas/privateCheckbox";
 import { ArrowIcon } from "@/app/ui/arrowIcon";
 import { FormField } from "@/app/ui/formField";
-import { ideaFieldMaxLength as maxLength, privateDetailNotice } from "@/lib/ideas/ideas";
+import { ideaFieldMaxLength as maxLength } from "@/lib/ideas/ideas";
 
 export function IdeaForm() {
   const [state, formAction, pending] = useActionState<IdeaFormState, FormData>(publishIdea, {});
@@ -71,6 +72,7 @@ export function IdeaForm() {
         defaultValue={values?.team_members}
         error={errors?.team_members}
       />
+      <PrivateCheckbox name="team_private" defaultChecked={state.visibility?.team_private} />
 
       <button
         type="submit"
@@ -81,15 +83,5 @@ export function IdeaForm() {
         {!pending && <ArrowIcon className="h-4 w-4" />}
       </button>
     </form>
-  );
-}
-
-// IH-38: the field above it stays hidden from visitors who aren't signed in.
-function PrivateCheckbox({ name, defaultChecked }: { name: string; defaultChecked?: boolean }) {
-  return (
-    <label className="mt-2 flex items-center gap-2 text-sm text-ink-soft">
-      <input type="checkbox" name={name} defaultChecked={defaultChecked} className="h-4 w-4 accent-accent" />
-      {privateDetailNotice}
-    </label>
   );
 }

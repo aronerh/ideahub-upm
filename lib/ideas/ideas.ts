@@ -17,6 +17,8 @@ export const privateDetailNotice = "Anyone with an IdeaHub account can read this
 export type IdeaVisibility = {
   problem_private: boolean;
   solution_private: boolean;
+  // IH-93: existing ideas keep the team private.
+  team_private: boolean;
 };
 
 export type Idea = IdeaSummary & IdeaVisibility & {
@@ -27,8 +29,6 @@ export type Idea = IdeaSummary & IdeaVisibility & {
   solution: string | null;
   // IH-93: null when the reader isn't signed in and the team is private.
   team_members: string | null;
-  // IH-93: true unless the student made the team public; existing ideas stay private.
-  team_private: boolean;
 };
 
 // The 5 fields a student fills in (IH-10).
@@ -66,6 +66,7 @@ export function readIdeaVisibility(formData: FormData): IdeaVisibility {
   return {
     problem_private: formData.get("problem_private") === "on",
     solution_private: formData.get("solution_private") === "on",
+    team_private: formData.get("team_private") === "on",
   };
 }
 

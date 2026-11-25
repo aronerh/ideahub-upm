@@ -39,6 +39,7 @@ const validIdea = {
 // IH-14: sector and stage are required too.
 const classification = { sector: "health", stage: "prototype" };
 const validForm = { ...validIdea, ...classification };
+const publicDetails = { problem_private: false, solution_private: false, team_private: false };
 
 // Mock database INSERT.
 const insert = vi.fn();
@@ -156,6 +157,7 @@ describe("publishIdea", () => {
       ...classification,
       problem_private: false,
       solution_private: false,
+      team_private: false,
     });
   });
 
@@ -169,6 +171,7 @@ describe("publishIdea", () => {
       ...classification,
       problem_private: false,
       solution_private: true,
+      team_private: false,
     });
   });
 
@@ -247,7 +250,7 @@ describe("updateIdea", () => {
       updateIdea(ideaId, {}, formWith(validForm))
     ).rejects.toThrow(`redirect:/ideas/${ideaId}`);
 
-    expect(update).toHaveBeenCalledWith({ ...validIdea, ...classification });
+    expect(update).toHaveBeenCalledWith({ ...validIdea, ...publicDetails, ...classification });
 
     expect(eq).toHaveBeenCalledWith("id", ideaId);
     expect(eq).toHaveBeenCalledWith("author_id", "user-1");
@@ -391,7 +394,7 @@ describe("sector and stage", () => {
       updateIdea(ideaId, {}, formWith({ ...validIdea, sector: "mobility", stage: "growing" })),
     ).rejects.toThrow(`redirect:/ideas/${ideaId}`);
 
-    expect(update).toHaveBeenCalledWith({ ...validIdea, sector: "mobility", stage: "growing" });
+    expect(update).toHaveBeenCalledWith({ ...validIdea, ...publicDetails, sector: "mobility", stage: "growing" });
   });
 
   it("doesn't save an edit without a sector and stage", async () => {

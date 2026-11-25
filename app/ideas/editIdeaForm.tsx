@@ -10,12 +10,14 @@ import {
 } from "@/app/ideas/actions";
 
 import { ClassificationFields } from "@/app/ideas/classificationFields";
+import { PrivateCheckbox } from "@/app/ideas/privateCheckbox";
 import { ArrowIcon } from "@/app/ui/arrowIcon";
 import { FormField } from "@/app/ui/formField";
 
 import {
   type Idea,
   type IdeaInput,
+  type IdeaVisibility,
   ideaFieldMaxLength as maxLength,
 } from "@/lib/ideas/ideas";
 import { type IdeaClassification, isSector, isStage } from "@/lib/ideas/classification";
@@ -37,16 +39,28 @@ export function EditIdeaForm({ idea }: { idea: Idea }) {
     stage: isStage(idea.stage) ? idea.stage : "",
   };
 
+  // IH-94: the boxes start as the student last saved them.
+  const initialVisibility: IdeaVisibility = {
+    problem_private: idea.problem_private,
+    solution_private: idea.solution_private,
+    team_private: idea.team_private,
+  };
+
   // Bind the idea ID to our IH-46 server action.
   const updateAction = updateIdea.bind(null, idea.id);
 
   const [state, formAction, pending] = useActionState<
     IdeaFormState,
     FormData
-  >(updateAction, { values: initialValues, classification: initialClassification });
+  >(updateAction, {
+    values: initialValues,
+    visibility: initialVisibility,
+    classification: initialClassification,
+  });
 
   // Keep the student's edited values after validation errors.
   const values = state.values ?? initialValues;
+  const visibility = state.visibility ?? initialVisibility;
   const classification = state.classification ?? initialClassification;
   const errors = state.fieldErrors;
 
@@ -97,6 +111,7 @@ export function EditIdeaForm({ idea }: { idea: Idea }) {
         defaultValue={values.problem}
         error={errors?.problem}
       />
+      <PrivateCheckbox name="problem_private" defaultChecked={visibility.problem_private} />
 
       <FormField
         name="solution"
@@ -108,6 +123,7 @@ export function EditIdeaForm({ idea }: { idea: Idea }) {
         defaultValue={values.solution}
         error={errors?.solution}
       />
+      <PrivateCheckbox name="solution_private" defaultChecked={visibility.solution_private} />
 
       <FormField
         name="team_members"
@@ -119,6 +135,7 @@ export function EditIdeaForm({ idea }: { idea: Idea }) {
         defaultValue={values.team_members}
         error={errors?.team_members}
       />
+      <PrivateCheckbox name="team_private" defaultChecked={visibility.team_private} />
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <button
