@@ -4,12 +4,16 @@ import { refresh } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/currentUser";
-import { readContactInput, validateContactMessage } from "@/lib/contact/contactRequests";
+import { readContactInput, validateContactDetails, validateContactMessage } from "@/lib/contact/contactRequests";
 import { notifyTeam } from "@/lib/contact/notifyTeam";
 import { isIdeaId } from "@/lib/ideas/ideas";
 import { createClient } from "@/lib/supabase/server";
 
 export type ContactFormState = {
+  investorName?: string;
+  investorNameError?: string;
+  investorOrganisation?: string;
+  investorOrganisationError?: string;
   message?: string;
   messageError?: string;
   formError?: string;
@@ -27,13 +31,26 @@ export async function requestContact(
     redirect("/sign-in");
   }
 
-  const { idea_id, message } = readContactInput(formData);
+  const { idea_id, investor_name, investor_organisation, message } = readContactInput(formData);
+  const detailErrors = validateContactDetails({ investor_name, investor_organisation });
   const messageError = validateContactMessage(message);
-  if (messageError) {
-    return { message, messageError };
+  if (detailErrors.investorNameError || detailErrors.investorOrganisationError || messageError) {
+    return {
+      investorName: investor_name,
+      investorNameError: detailErrors.investorNameError,
+      investorOrganisation: investor_organisation,
+      investorOrganisationError: detailErrors.investorOrganisationError,
+      message,
+      messageError: messageError ?? undefined,
+    };
   }
   if (!isIdeaId(idea_id)) {
-    return { message, formError: "This idea isn’t there any more." };
+    return {
+      investorName: investor_name,
+      investorOrganisation: investor_organisation,
+      message,
+      formError: "This idea isn’t there any more.",
+    };
   }
 
   const supabase = await createClient();
@@ -43,15 +60,35 @@ export async function requestContact(
     .eq("id", idea_id)
     .maybeSingle();
   if (!idea) {
-    return { message, formError: "This idea isn’t there any more." };
+    return {
+      investorName: investor_name,
+      investorOrganisation: investor_organisation,
+      message,
+      formError: "This idea isn’t there any more.",
+    };
   }
   if (idea.author_id === user.id) {
-    return { message, formError: "This is your own idea." };
+    return {
+      investorName: investor_name,
+      investorOrganisation: investor_organisation,
+      message,
+      formError: "This is your own idea.",
+    };
   }
 
-  const { error } = await supabase.from("contact_requests").insert({ idea_id, message });
+  const { error } = await supabase.from("contact_requests").insert({
+    idea_id,
+    investor_name,
+    investor_organisation,
+    message,
+  });
   if (error) {
-    return { message, formError: "Your request couldn’t be sent. Try again in a moment." };
+    return {
+      investorName: investor_name,
+      investorOrganisation: investor_organisation,
+      message,
+      formError: "Your request couldn’t be sent. Try again in a moment.",
+    };
   }
 
   const origin = (await headers()).get("origin") ?? "https://ideahub-upm.vercel.app";

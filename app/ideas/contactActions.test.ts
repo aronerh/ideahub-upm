@@ -36,7 +36,11 @@ const updateIs = vi.fn();
 
 function formWith(values: Record<string, string>) {
   const formData = new FormData();
-  for (const [field, value] of Object.entries(values)) {
+  const defaults = {
+    investor_name: "Bob Investor",
+    investor_organisation: "Example Ventures",
+  };
+  for (const [field, value] of Object.entries({ ...defaults, ...values })) {
     formData.set(field, value);
   }
   return formData;
@@ -71,7 +75,12 @@ describe("requestContact", () => {
     const state = await requestContact({}, formWith({ idea_id: ideaId, message: "  Let's talk.  " }));
 
     expect(state).toEqual({ sent: true });
-    expect(insert).toHaveBeenCalledWith({ idea_id: ideaId, message: "Let's talk." });
+    expect(insert).toHaveBeenCalledWith({
+      idea_id: ideaId,
+      investor_name: "Bob Investor",
+      investor_organisation: "Example Ventures",
+      message: "Let's talk.",
+    });
     expect(notifyTeam).toHaveBeenCalledWith({
       authorId,
       ideaTitle: "Study room finder",
@@ -106,7 +115,12 @@ describe("requestContact", () => {
   ])("saves nothing when the message is %#, and keeps what was typed", async (message, error) => {
     const state = await requestContact({}, formWith({ idea_id: ideaId, message }));
 
-    expect(state).toEqual({ message, messageError: error });
+    expect(state).toEqual({
+      investorName: "Bob Investor",
+      investorOrganisation: "Example Ventures",
+      message,
+      messageError: error,
+    });
     expect(insert).not.toHaveBeenCalled();
     expect(notifyTeam).not.toHaveBeenCalled();
   });
@@ -131,7 +145,12 @@ describe("requestContact", () => {
     insertError = { message: "new row violates row-level security policy" };
     const state = await requestContact({}, formWith({ idea_id: ideaId, message: "Hi" }));
 
-    expect(state).toEqual({ message: "Hi", formError: "Your request couldn’t be sent. Try again in a moment." });
+    expect(state).toEqual({
+      investorName: "Bob Investor",
+      investorOrganisation: "Example Ventures",
+      message: "Hi",
+      formError: "Your request couldn’t be sent. Try again in a moment.",
+    });
     expect(notifyTeam).not.toHaveBeenCalled();
   });
 
