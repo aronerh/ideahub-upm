@@ -57,7 +57,7 @@ test("a visitor sees the team members locked, with a sign-in button", async ({ p
   const article = await openFirstIdea(page);
 
   const team = article.getByRole("heading", { level: 2, name: "Team members" }).locator("..");
-  await expect(team).toContainText("Only UPM students and investors can read this.");
+  await expect(team).toContainText("Anyone with an IdeaHub account can read this.");
   await expect(team.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/sign-in");
 });
 
@@ -78,7 +78,7 @@ test("a signed-in user sees every detail, with nothing locked", async ({ page })
   const article = await openFirstIdea(page);
 
   await expect(article.getByRole("heading", { level: 2, name: "Team members" })).toBeVisible();
-  await expect(article).not.toContainText("Only UPM students and investors can read this.");
+  await expect(article).not.toContainText("Anyone with an IdeaHub account can read this.");
 });
 
 // IH-14: works with any ideas in the database, since nothing matches this word.

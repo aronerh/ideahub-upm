@@ -69,7 +69,7 @@ describe("IdeaDetail", () => {
 
     for (const heading of ["Problem", "Team members"]) {
       const section = within(article).getByRole("heading", { level: 2, name: heading }).parentElement!;
-      expect(section.textContent).toContain("Only UPM students and investors can read this.");
+      expect(section.textContent).toContain("Anyone with an IdeaHub account can read this.");
       expect(within(section).getByRole("link", { name: "Sign in" }).getAttribute("href")).toBe("/sign-in");
     }
     expect(article.textContent).toContain(idea.solution);
@@ -82,7 +82,7 @@ describe("IdeaDetail", () => {
 
     expect(article.textContent).toContain(idea.problem);
     expect(article.textContent).toContain(idea.solution);
-    expect(article.textContent).not.toContain("Only UPM students and investors can read this.");
+    expect(article.textContent).not.toContain("Anyone with an IdeaHub account can read this.");
     expect(within(article).queryByRole("link", { name: "Sign in" })).toBeNull();
   });
 

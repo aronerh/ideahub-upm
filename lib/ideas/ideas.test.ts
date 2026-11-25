@@ -107,7 +107,7 @@ describe("validateIdeaInput", () => {
   });
 });
 
-// IH-40: the two "Only UPM students and investors can read this" checkboxes.
+// IH-40: the two "Anyone with an IdeaHub account can read this" checkboxes.
 describe("readIdeaVisibility", () => {
   it("makes a detail private only when its box is ticked", () => {
     const formData = new FormData();
