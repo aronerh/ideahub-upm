@@ -12,11 +12,18 @@ import {
   readIdeaVisibility,
   validateIdeaInput,
 } from "@/lib/ideas/ideas";
+import {
+  type IdeaClassification,
+  readIdeaClassification,
+  validateIdeaClassification,
+} from "@/lib/ideas/classification";
 import { createClient } from "@/lib/supabase/server";
 
 export type IdeaFormState = {
   values?: IdeaInput;
   visibility?: IdeaVisibility;
+  // IH-14: the sector and stage picked, kept when the form comes back with errors.
+  classification?: IdeaClassification;
   fieldErrors?: IdeaFieldErrors;
   formError?: string;
 };
@@ -34,25 +41,27 @@ export async function publishIdea(
 
   const values = readIdeaInput(formData);
   const visibility = readIdeaVisibility(formData);
+  const classification = readIdeaClassification(formData);
   if (!isUpmEmail(user.email)) {
-    return { values, visibility, formError: emailDomainError };
+    return { values, visibility, classification, formError: emailDomainError };
   }
 
-  const fieldErrors = validateIdeaInput(values);
+  const fieldErrors = mergeErrors(validateIdeaInput(values), validateIdeaClassification(classification));
   if (fieldErrors) {
-    return { values, visibility, fieldErrors };
+    return { values, visibility, classification, fieldErrors };
   }
 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("ideas")
-    .insert({ ...values, ...visibility })
+    .insert({ ...values, ...visibility, ...classification })
     .select("id")
     .single();
   if (error) {
     return {
       values,
       visibility,
+      classification,
       formError: "Your idea couldn't be published. Check every field and try again.",
     };
   }
@@ -115,19 +124,20 @@ export async function updateIdea(
     redirect("/sign-in");
   }
 
-  // Read the five edited fields.
+  // Read the five edited fields, plus sector and stage (IH-14).
   const values = readIdeaInput(formData);
+  const classification = readIdeaClassification(formData);
 
   // Check the student's UPM email.
   if (!isUpmEmail(user.email)) {
-    return { values, formError: emailDomainError };
+    return { values, classification, formError: emailDomainError };
   }
 
   // Validate the edited values.
-  const fieldErrors = validateIdeaInput(values);
+  const fieldErrors = mergeErrors(validateIdeaInput(values), validateIdeaClassification(classification));
 
   if (fieldErrors) {
-    return { values, fieldErrors };
+    return { values, classification, fieldErrors };
   }
 
   // Connect to Supabase as the current user.
@@ -136,7 +146,7 @@ export async function updateIdea(
   // Only update an idea belonging to this student.
   const { data, error } = await supabase
     .from("ideas")
-    .update(values)
+    .update({ ...values, ...classification })
     .eq("id", ideaId)
     .eq("author_id", user.id)
     .select("id")
@@ -145,6 +155,7 @@ export async function updateIdea(
   if (error) {
     return {
       values,
+      classification,
       formError: "Your idea couldn't be updated. Please try again.",
     };
   }
@@ -153,6 +164,7 @@ export async function updateIdea(
   if (!data) {
     return {
       values,
+      classification,
       formError: "Idea not found or you don't have permission to edit it.",
     };
   }
@@ -166,3 +178,9 @@ export async function updateIdea(
 }
 
 
+
+// Puts the 5 fields' errors and the sector and stage errors together; null when there are none.
+function mergeErrors(...errors: (IdeaFieldErrors | null)[]): IdeaFieldErrors | null {
+  const merged: IdeaFieldErrors = Object.assign({}, ...errors.filter(Boolean));
+  return Object.keys(merged).length > 0 ? merged : null;
+}

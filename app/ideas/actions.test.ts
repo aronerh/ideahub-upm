@@ -36,6 +36,10 @@ const validIdea = {
   team_members: "Ana, Marco",
 };
 
+// IH-14: sector and stage are required too.
+const classification = { sector: "health", stage: "prototype" };
+const validForm = { ...validIdea, ...classification };
+
 // Mock database INSERT.
 const insert = vi.fn();
 
@@ -142,20 +146,30 @@ beforeEach(() => {
 describe("publishIdea", () => {
   it("saves the 5 fields and takes the student to the idea's page", async () => {
     await expect(
-      publishIdea({}, formWith(validIdea))
+      publishIdea({}, formWith(validForm))
     ).rejects.toThrow(
       `redirect:/ideas/${ideaId}?published=1`
     );
 
-    expect(insert).toHaveBeenCalledWith({ ...validIdea, problem_private: false, solution_private: false });
+    expect(insert).toHaveBeenCalledWith({
+      ...validIdea,
+      ...classification,
+      problem_private: false,
+      solution_private: false,
+    });
   });
 
   // IH-38: a ticked box saves that detail as private.
   it("saves which details the student made private", async () => {
     await expect(
-      publishIdea({}, formWith({ ...validIdea, solution_private: "on" })),
+      publishIdea({}, formWith({ ...validForm, solution_private: "on" })),
     ).rejects.toThrow(`redirect:/ideas/${ideaId}?published=1`);
-    expect(insert).toHaveBeenCalledWith({ ...validIdea, problem_private: false, solution_private: true });
+    expect(insert).toHaveBeenCalledWith({
+      ...validIdea,
+      ...classification,
+      problem_private: false,
+      solution_private: true,
+    });
   });
 
   it("saves nothing and shows a message per field when the form is empty", async () => {
@@ -169,13 +183,15 @@ describe("publishIdea", () => {
       "problem",
       "solution",
       "team_members",
+      "sector",
+      "stage",
     ]);
   });
 
   it("saves nothing when one field is too long, and keeps what the student typed", async () => {
     const values = { ...validIdea, title: "a".repeat(81) };
 
-    const state = await publishIdea({}, formWith(values));
+    const state = await publishIdea({}, formWith({ ...values, ...classification }));
 
     expect(insert).not.toHaveBeenCalled();
 
@@ -190,7 +206,7 @@ describe("publishIdea", () => {
     signInAs(null);
 
     await expect(
-      publishIdea({}, formWith(validIdea))
+      publishIdea({}, formWith(validForm))
     ).rejects.toThrow("redirect:/sign-in");
 
     expect(insert).not.toHaveBeenCalled();
@@ -199,7 +215,7 @@ describe("publishIdea", () => {
   it("rejects a student without a UPM email without saving", async () => {
     signInAs("ana@gmail.com");
 
-    const state = await publishIdea({}, formWith(validIdea));
+    const state = await publishIdea({}, formWith(validForm));
 
     expect(insert).not.toHaveBeenCalled();
     expect(state.formError).toBeTruthy();
@@ -211,7 +227,7 @@ describe("publishIdea", () => {
       error: { message: "check constraint" },
     };
 
-    const state = await publishIdea({}, formWith(validIdea));
+    const state = await publishIdea({}, formWith(validForm));
 
     expect(state.formError).toBe(
       "Your idea couldn't be published. Check every field and try again."
@@ -228,10 +244,10 @@ describe("publishIdea", () => {
 describe("updateIdea", () => {
   it("updates the five fields and redirects to the idea page", async () => {
     await expect(
-      updateIdea(ideaId, {}, formWith(validIdea))
+      updateIdea(ideaId, {}, formWith(validForm))
     ).rejects.toThrow(`redirect:/ideas/${ideaId}`);
 
-    expect(update).toHaveBeenCalledWith(validIdea);
+    expect(update).toHaveBeenCalledWith({ ...validIdea, ...classification });
 
     expect(eq).toHaveBeenCalledWith("id", ideaId);
     expect(eq).toHaveBeenCalledWith("author_id", "user-1");
@@ -257,6 +273,8 @@ describe("updateIdea", () => {
       "problem",
       "solution",
       "team_members",
+      "sector",
+      "stage",
     ]);
   });
 
@@ -269,7 +287,7 @@ describe("updateIdea", () => {
     const state = await updateIdea(
       ideaId,
       {},
-      formWith(values)
+      formWith({ ...values, ...classification })
     );
 
     expect(update).not.toHaveBeenCalled();
@@ -285,7 +303,7 @@ describe("updateIdea", () => {
     signInAs(null);
 
     await expect(
-      updateIdea(ideaId, {}, formWith(validIdea))
+      updateIdea(ideaId, {}, formWith(validForm))
     ).rejects.toThrow("redirect:/sign-in");
 
     expect(update).not.toHaveBeenCalled();
@@ -297,7 +315,7 @@ describe("updateIdea", () => {
     const state = await updateIdea(
       ideaId,
       {},
-      formWith(validIdea)
+      formWith(validForm)
     );
 
     expect(update).not.toHaveBeenCalled();
@@ -313,7 +331,7 @@ describe("updateIdea", () => {
     const state = await updateIdea(
       ideaId,
       {},
-      formWith(validIdea)
+      formWith(validForm)
     );
 
     expect(state.formError).toBe(
@@ -332,7 +350,7 @@ describe("updateIdea", () => {
     const state = await updateIdea(
       ideaId,
       {},
-      formWith(validIdea)
+      formWith(validForm)
     );
 
     expect(state.formError).toBe(
@@ -345,6 +363,45 @@ describe("updateIdea", () => {
 });
 
 // IH-47: deleting your own idea.
+// IH-14: sector and stage in the publish and edit forms.
+describe("sector and stage", () => {
+  it("publishes nothing without a sector and stage, and says so", async () => {
+    const state = await publishIdea({}, formWith(validIdea));
+
+    expect(insert).not.toHaveBeenCalled();
+    expect(state.fieldErrors).toEqual({ sector: "Pick a sector.", stage: "Pick a stage." });
+    expect(state.values).toEqual(validIdea);
+  });
+
+  it("ignores a sector or stage that isn't in the list", async () => {
+    const state = await publishIdea({}, formWith({ ...validIdea, sector: "crypto", stage: "unicorn" }));
+
+    expect(insert).not.toHaveBeenCalled();
+    expect(state.fieldErrors).toEqual({ sector: "Pick a sector.", stage: "Pick a stage." });
+  });
+
+  it("keeps the picked sector and stage when another field has an error", async () => {
+    const state = await publishIdea({}, formWith({ ...validForm, title: "" }));
+
+    expect(state.classification).toEqual(classification);
+  });
+
+  it("saves a changed sector and stage when editing", async () => {
+    await expect(
+      updateIdea(ideaId, {}, formWith({ ...validIdea, sector: "mobility", stage: "growing" })),
+    ).rejects.toThrow(`redirect:/ideas/${ideaId}`);
+
+    expect(update).toHaveBeenCalledWith({ ...validIdea, sector: "mobility", stage: "growing" });
+  });
+
+  it("doesn't save an edit without a sector and stage", async () => {
+    const state = await updateIdea(ideaId, {}, formWith(validIdea));
+
+    expect(update).not.toHaveBeenCalled();
+    expect(state.fieldErrors).toEqual({ sector: "Pick a sector.", stage: "Pick a stage." });
+  });
+});
+
 describe("deleteIdea", () => {
   it("deletes only the student's own idea and takes them to the list on the home page", async () => {
     await expect(deleteIdea(ideaId)).rejects.toThrow(/^redirect:\/$/);
