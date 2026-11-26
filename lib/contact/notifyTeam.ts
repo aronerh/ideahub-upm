@@ -25,14 +25,22 @@ export type ContactNotification = {
 
 export type NotifyResult = "sent" | "not-configured" | "failed";
 
-export async function notifyTeam(notification: ContactNotification): Promise<NotifyResult> {
+// The three settings above, or null until all of them are set. Also used by notifyReply (IH-106).
+export function emailSettings(): { apiKey: string; from: string; secretKey: string } | null {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.CONTACT_EMAIL_FROM;
   const secretKey = process.env.SUPABASE_SECRET_KEY;
-  if (!apiKey || !from || !secretKey) return "not-configured";
+  if (!apiKey || !from || !secretKey) return null;
+  return { apiKey, from, secretKey };
+}
+
+export async function notifyTeam(notification: ContactNotification): Promise<NotifyResult> {
+  const settings = emailSettings();
+  if (!settings) return "not-configured";
+  const { apiKey, from, secretKey } = settings;
 
   try {
-    const authorEmail = await findAuthorEmail(notification.authorId, secretKey);
+    const authorEmail = await findUserEmail(notification.authorId, secretKey);
     if (!authorEmail) {
       console.error(`Contact request: no email for author ${notification.authorId}`);
       return "failed";
@@ -73,18 +81,19 @@ export function contactEmailText({
   ].join("\n");
 }
 
-async function findAuthorEmail(authorId: string, secretKey: string): Promise<string | null> {
+export async function findUserEmail(userId: string, secretKey: string): Promise<string | null> {
   const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  const { data, error } = await admin.auth.admin.getUserById(authorId);
+  const { data, error } = await admin.auth.admin.getUserById(userId);
   if (error) throw error;
   return data.user?.email ?? null;
 }
 
-type Email = { from: string; to: string; replyTo: string; subject: string; text: string };
+// replyTo is optional: the reply emails (IH-106) send people back to the site instead.
+type Email = { from: string; to: string; replyTo?: string; subject: string; text: string };
 
-async function sendEmail(apiKey: string, email: Email) {
+export async function sendEmail(apiKey: string, email: Email) {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
