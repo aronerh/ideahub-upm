@@ -26,7 +26,8 @@ if (!idea) notFound();
         ...idea,
         problem: idea.problem_private ? null : idea.problem,
         solution: idea.solution_private ? null : idea.solution,
-        team_members: null,
+        // IH-94: a public team is shown to visitors too.
+        team_members: idea.team_private ? null : idea.team_members,
       }
     : idea;
 

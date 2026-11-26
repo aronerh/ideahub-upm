@@ -26,12 +26,12 @@ describe("IdeaForm", () => {
     }
   });
 
-  // IH-38: problem and solution can each be made private; ideas are public by default.
-  it("lets the student make the problem and the solution private, unticked by default", () => {
+  // IH-38, IH-94: problem, solution and team can each be made private; ideas are public by default.
+  it("lets the student make the problem, the solution and the team private, unticked by default", () => {
     render(<IdeaForm />);
     const boxes = screen.getAllByRole("checkbox", { name: "Anyone with an IdeaHub account can read this" });
 
-    expect(boxes.map((box) => box.getAttribute("name"))).toEqual(["problem_private", "solution_private"]);
+    expect(boxes.map((box) => box.getAttribute("name"))).toEqual(["problem_private", "solution_private", "team_private"]);
     for (const box of boxes) {
       expect(box).toHaveProperty("checked", false);
     }
