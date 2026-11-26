@@ -91,6 +91,18 @@ describe("validateContactDetails", () => {
     });
   });
 
+  it("asks for the investor name with the exact error", () => {
+    expect(validateContactDetails({ investor_name: "", investor_organisation: "Fund" })).toEqual({
+      investorNameError: "Write your name.",
+    });
+  });
+
+  it("asks for the organisation with the exact error", () => {
+    expect(validateContactDetails({ investor_name: "Laura Investor", investor_organisation: "" })).toEqual({
+      investorOrganisationError: "Write the organisation you represent.",
+    });
+  });
+
   it("accepts details at the maximum lengths", () => {
     expect(
       validateContactDetails({

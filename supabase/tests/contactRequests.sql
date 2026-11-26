@@ -260,3 +260,64 @@ select tests.expect_rows($sql$
   values ('10000000-0000-0000-0000-000000000001', 'Hello')
 $sql$, 1);
 rollback;
+
+-- IH-99 / IH-101: investor name and organisation rules.
+begin;
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es'),
+  ('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
+insert into public.ideas (id, author_id, title, pitch, problem, solution, team_members)
+values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a',
+  'Idea', 'Pitch', 'Problem', 'Solution', 'Ana');
+
+-- Legacy rows may leave both values null.
+do $$ begin
+  insert into public.contact_requests (idea_id, requester_id, requester_email, message)
+  values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b',
+    'bob@gmail.com', 'A legacy request');
+end $$;
+
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000b', 'bob@gmail.com');
+-- The authenticated insert grant includes both new columns.
+select tests.expect_rows($sql$
+  insert into public.contact_requests
+    (idea_id, investor_name, investor_organisation, message)
+  values
+    ('10000000-0000-0000-0000-000000000001',
+     repeat('n', 100), repeat('o', 120), 'Valid details')
+$sql$, 1);
+
+select tests.expect_error($sql$
+  insert into public.contact_requests
+    (idea_id, investor_name, investor_organisation, message)
+  values
+    ('10000000-0000-0000-0000-000000000001', '   ', 'Fund', 'Blank name')
+$sql$, '23514');
+select tests.expect_error($sql$
+  insert into public.contact_requests
+    (idea_id, investor_name, investor_organisation, message)
+  values
+    ('10000000-0000-0000-0000-000000000001', 'Bob', '   ', 'Blank organisation')
+$sql$, '23514');
+select tests.expect_error($sql$
+  insert into public.contact_requests
+    (idea_id, investor_name, investor_organisation, message)
+  values
+    ('10000000-0000-0000-0000-000000000001', repeat('n', 101), 'Fund', 'Long name')
+$sql$, '23514');
+select tests.expect_error($sql$
+  insert into public.contact_requests
+    (idea_id, investor_name, investor_organisation, message)
+  values
+    ('10000000-0000-0000-0000-000000000001', 'Bob', repeat('o', 121), 'Long organisation')
+$sql$, '23514');
+
+-- Only read_at is updateable; the new investor details cannot be changed.
+select tests.sign_in_as('00000000-0000-0000-0000-00000000000a', 'ana@alumnos.upm.es');
+select tests.expect_error($sql$
+  update public.contact_requests set investor_name = 'Changed'
+$sql$, '42501');
+select tests.expect_error($sql$
+  update public.contact_requests set investor_organisation = 'Changed'
+$sql$, '42501');
+rollback;
