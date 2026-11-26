@@ -1,5 +1,6 @@
 import "server-only";
 import { type ContactRequest, contactRequestColumns } from "@/lib/contact/contactRequests";
+import { type Message, messageColumns } from "@/lib/contact/messages";
 import { createClient } from "@/lib/supabase/server";
 
 // IH-43: the requests sent about one idea, newest first. RLS returns them only to the idea's author
@@ -30,4 +31,36 @@ export async function listUnreadContactRequests(authorId: string): Promise<{ ide
 
   if (error) throw new Error(`Couldn't load unread contact requests: ${error.message}`);
   return data.map((request) => ({ idea_id: request.idea_id }));
+}
+
+// IH-105: the requests the signed-in user sent about one idea, newest first, so an investor can find
+// their conversation with the team. The requester_id filter matters: the idea's author would otherwise
+// get every request about it.
+export async function listMyContactRequests(ideaId: string, userId: string): Promise<ContactRequest[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("contact_requests")
+    .select(contactRequestColumns)
+    .eq("idea_id", ideaId)
+    .eq("requester_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(`Couldn't load your contact requests for idea ${ideaId}: ${error.message}`);
+  return data;
+}
+
+// IH-105: the replies under the given requests, oldest first. RLS (010) returns only the replies of
+// requests the signed-in user sent or received.
+export async function listMessages(requestIds: string[]): Promise<Message[]> {
+  if (requestIds.length === 0) return [];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("messages")
+    .select(messageColumns)
+    .in("request_id", requestIds)
+    .order("created_at", { ascending: true });
+
+  if (error) throw new Error(`Couldn't load the replies: ${error.message}`);
+  return data;
 }

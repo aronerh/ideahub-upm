@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { ContactRequests } from "@/app/ideas/contactRequests";
 import { MarkRequestsRead } from "@/app/ideas/markRequestsRead";
 import { getCurrentUser } from "@/lib/auth/currentUser";
-import { listContactRequests } from "@/lib/contact/queries";
+import { listContactRequests, listMessages, listMyContactRequests } from "@/lib/contact/queries";
 import { getIdea } from "@/lib/ideas/queries";
 import { ContactForm } from "@/app/ideas/contactForm";
+import { YourRequests } from "@/app/ideas/yourRequests";
 import { IdeaDetail } from "@/app/ideas/ideaDetail";
 
 export async function LoadedIdea({ params, searchParams }: Pick<PageProps<"/ideas/[id]">, "params" | "searchParams">) {
@@ -32,6 +33,9 @@ if (!idea) notFound();
     : idea;
 
   const contactRequests = isOwner && !visitorPreview ? await listContactRequests(idea.id) : null;
+  // IH-105: an investor sees their own requests about this idea, and both sides see the replies.
+  const myRequests = user && !isOwner ? await listMyContactRequests(idea.id, user.id) : [];
+  const messages = await listMessages([...(contactRequests ?? []), ...myRequests].map((request) => request.id));
   const ContactFormComponent = ContactForm;
 
   return (
@@ -67,8 +71,9 @@ if (!idea) notFound();
         </div>
       )}
       <IdeaDetail idea={displayedIdea} isOwner={isOwner && !visitorPreview} />
-      {contactRequests && <ContactRequests requests={contactRequests} />}
+      {contactRequests && user && <ContactRequests requests={contactRequests} messages={messages} userId={user.id} />}
       {contactRequests?.some((request) => request.read_at === null) && <MarkRequestsRead ideaId={idea.id} />}
+      {user && <YourRequests requests={myRequests} messages={messages} userId={user.id} />}
       {(!isOwner || visitorPreview) && <ContactFormComponent ideaId={idea.id} signedIn={!!user && !visitorPreview} />}
 
     </>

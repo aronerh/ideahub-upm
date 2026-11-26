@@ -3,15 +3,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LoadedIdea } from "@/app/ideas/[id]/loadedIdea";
 import type { Idea } from "@/lib/ideas/ideas";
 
-const { getIdea, getCurrentUser, listContactRequests } = vi.hoisted(() => ({
+const { getIdea, getCurrentUser, listContactRequests, listMyContactRequests, listMessages } = vi.hoisted(() => ({
   getIdea: vi.fn(),
   getCurrentUser: vi.fn(),
   listContactRequests: vi.fn(),
+  listMyContactRequests: vi.fn(),
+  listMessages: vi.fn(),
 }));
 
 vi.mock("@/lib/ideas/queries", () => ({ getIdea }));
 vi.mock("@/lib/auth/currentUser", () => ({ getCurrentUser }));
-vi.mock("@/lib/contact/queries", () => ({ listContactRequests }));
+vi.mock("@/lib/contact/queries", () => ({ listContactRequests, listMyContactRequests, listMessages }));
 
 vi.mock("@/app/ideas/deleteIdeaButton", () => ({
   DeleteIdeaButton: () => <button type="button">Delete idea</button>,
@@ -23,6 +25,10 @@ vi.mock("@/app/ideas/markRequestsRead", () => ({
 
 vi.mock("@/app/ideas/contactActions", () => ({
   requestContact: vi.fn(),
+}));
+
+vi.mock("@/app/ideas/replyActions", () => ({
+  replyToRequest: vi.fn(),
 }));
 
 vi.mock("@/app/ui/backLink", () => ({
@@ -61,6 +67,8 @@ beforeEach(() => {
   getIdea.mockResolvedValue(idea);
   getCurrentUser.mockResolvedValue({ id: idea.author_id });
   listContactRequests.mockResolvedValue([]);
+  listMyContactRequests.mockResolvedValue([]);
+  listMessages.mockResolvedValue([]);
 });
 
 describe("IH-92: visitor preview", () => {
@@ -146,6 +154,7 @@ describe("IH-92: visitor preview", () => {
     ).toBeNull();
 
     expect(listContactRequests).not.toHaveBeenCalled();
+    expect(listMyContactRequests).not.toHaveBeenCalled();
   });
 
   it("shows the signed-out contact box during preview", async () => {
@@ -193,5 +202,79 @@ describe("IH-92: visitor preview", () => {
     ).toBeTruthy();
 
     expect(listContactRequests).toHaveBeenCalledWith(idea.id);
+  });
+});
+
+// IH-105: the replies under a contact request, on both sides of the conversation.
+describe("IH-105: replies on the idea page", () => {
+  const investorId = "00000000-0000-4000-8000-0000000000bb";
+  const request = {
+    id: "00000000-0000-4000-8000-000000000002",
+    idea_id: idea.id,
+    requester_email: "laura@investor.com",
+    investor_name: "Laura Investor",
+    investor_organisation: "North Capital",
+    message: "I'd like to hear more.",
+    created_at: "2026-11-10T09:00:00Z",
+    read_at: null,
+  };
+  const reply = (sender_id: string, body: string) => ({
+    id: `m-${body}`,
+    request_id: request.id,
+    sender_id,
+    body,
+    created_at: "2026-11-11T09:00:00Z",
+  });
+
+  it("shows the author each request with its replies, and loads them for those requests only", async () => {
+    listContactRequests.mockResolvedValue([request]);
+    listMessages.mockResolvedValue([reply(idea.author_id, "Monday works."), reply(investorId, "Great.")]);
+
+    await renderPage();
+
+    const replies = within(await screen.findByRole("list", { name: "Replies" }));
+    expect(replies.getAllByRole("listitem").map((item) => item.textContent)).toEqual([
+      expect.stringMatching(/^You\d.*Monday works\.$/),
+      expect.stringMatching(/^Laura Investor\d.*Great\.$/),
+    ]);
+    expect(listMessages).toHaveBeenCalledWith([request.id]);
+    expect(listMyContactRequests).not.toHaveBeenCalled();
+  });
+
+  it("shows an investor their own request and the team's replies, and a way to answer", async () => {
+    getCurrentUser.mockResolvedValue({ id: investorId });
+    listMyContactRequests.mockResolvedValue([request]);
+    listMessages.mockResolvedValue([reply(idea.author_id, "Monday works.")]);
+
+    await renderPage();
+
+    const section = within(await screen.findByRole("region", { name: "Your messages to the team" }));
+    expect(section.getByText("I'd like to hear more.")).toBeTruthy();
+    expect(section.getByText("The team")).toBeTruthy();
+    expect(section.getByText("Monday works.")).toBeTruthy();
+    expect(section.getByRole("button", { name: "Send reply" })).toBeTruthy();
+    expect(listMyContactRequests).toHaveBeenCalledWith(idea.id, investorId);
+    expect(listMessages).toHaveBeenCalledWith([request.id]);
+    expect(listContactRequests).not.toHaveBeenCalled();
+  });
+
+  it("shows no conversation to an investor who hasn't written to the team", async () => {
+    getCurrentUser.mockResolvedValue({ id: investorId });
+
+    await renderPage();
+
+    await screen.findByRole("heading", { name: "Contact the team" });
+    expect(screen.queryByRole("region", { name: "Your messages to the team" })).toBeNull();
+    expect(listMessages).toHaveBeenCalledWith([]);
+  });
+
+  it("doesn't look up anyone's requests for a visitor", async () => {
+    getCurrentUser.mockResolvedValue(null);
+
+    await renderPage();
+
+    await screen.findByRole("heading", { name: "Contact the team" });
+    expect(listContactRequests).not.toHaveBeenCalled();
+    expect(listMyContactRequests).not.toHaveBeenCalled();
   });
 });
