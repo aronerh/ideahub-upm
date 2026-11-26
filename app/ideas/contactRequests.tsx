@@ -1,8 +1,19 @@
+import { ReplyThread } from "@/app/ideas/replyThread";
 import { formatInvestorDetail, type ContactRequest } from "@/lib/contact/contactRequests";
+import { type Message, repliesTo } from "@/lib/contact/messages";
 import { formatIdeaDate } from "@/lib/ideas/ideas";
 
 // IH-43: the idea's author sees who asked to contact the team, newest first.
-export function ContactRequests({ requests }: { requests: ContactRequest[] }) {
+// IH-105: each request has its thread of replies, so the team can answer on the site.
+export function ContactRequests({
+  requests,
+  messages,
+  userId,
+}: {
+  requests: ContactRequest[];
+  messages: Message[];
+  userId: string;
+}) {
   return (
     <section
       aria-labelledby="contact-requests-heading"
@@ -11,7 +22,7 @@ export function ContactRequests({ requests }: { requests: ContactRequest[] }) {
       <h2 id="contact-requests-heading" className="font-heading text-xl font-semibold tracking-tight">
         Contact requests
       </h2>
-      <p className="mt-1 text-sm text-ink-soft">Only you can see these. Reply to them by email.</p>
+      <p className="mt-1 text-sm text-ink-soft">Only you can see these. Reply here or by email.</p>
 
       {requests.length === 0 ? (
         <p className="mt-6 text-ink-soft">No requests yet.</p>
@@ -40,10 +51,22 @@ export function ContactRequests({ requests }: { requests: ContactRequest[] }) {
               <p className="mt-2 max-w-prose whitespace-pre-line break-words leading-relaxed">
                 {request.message}
               </p>
+              <ReplyThread
+                requestId={request.id}
+                messages={repliesTo(request.id, messages)}
+                userId={userId}
+                otherSide={investorLabel(request)}
+              />
             </li>
           ))}
         </ul>
       )}
     </section>
   );
+}
+
+// Who wrote the replies that aren't the author's: the investor's name, or their email when legacy requests have none.
+function investorLabel(request: ContactRequest): string {
+  const name = request.investor_name?.trim();
+  return name ? name : request.requester_email;
 }
