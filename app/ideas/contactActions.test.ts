@@ -86,6 +86,8 @@ describe("requestContact", () => {
       ideaTitle: "Study room finder",
       ideaUrl: `https://preview.example/ideas/${ideaId}`,
       requesterEmail: "bob@gmail.com",
+      investorName: "Bob Investor",
+      investorOrganisation: "Example Ventures",
       message: "Let's talk.",
     });
   });

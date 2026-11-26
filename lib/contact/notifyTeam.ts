@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { formatInvestorDetail } from "@/lib/contact/contactRequests";
 
 // Only call this from server code (the contact server action): it uses secret keys.
 // IH-42: emails the idea's author about a new contact request, with the investor as reply-to so the
@@ -17,6 +18,8 @@ export type ContactNotification = {
   ideaTitle: string;
   ideaUrl: string;
   requesterEmail: string;
+  investorName: string | null;
+  investorOrganisation: string | null;
   message: string;
 };
 
@@ -49,9 +52,18 @@ export async function notifyTeam(notification: ContactNotification): Promise<Not
   }
 }
 
-export function contactEmailText({ ideaTitle, ideaUrl, requesterEmail, message }: ContactNotification) {
+export function contactEmailText({
+  ideaTitle,
+  ideaUrl,
+  requesterEmail,
+  investorName,
+  investorOrganisation,
+  message,
+}: ContactNotification) {
   return [
-    `${requesterEmail} wants to contact the team behind “${ideaTitle}” on IdeaHub UPM.`,
+    `${formatInvestorDetail(investorName)} (${formatInvestorDetail(investorOrganisation)}` +
+      `) wants to contact the team behind “${ideaTitle}” on IdeaHub UPM.`,
+    `Email: ${requesterEmail}`,
     "",
     "Their message:",
     "",
