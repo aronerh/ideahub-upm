@@ -277,4 +277,31 @@ describe("IH-105: replies on the idea page", () => {
     expect(listContactRequests).not.toHaveBeenCalled();
     expect(listMyContactRequests).not.toHaveBeenCalled();
   });
+
+  it("shows the author no reply boxes while previewing as a visitor", async () => {
+    listContactRequests.mockResolvedValue([request]);
+
+    await renderPage("visitor");
+
+    await screen.findByText("Visitor preview");
+    expect(screen.queryByRole("button", { name: "Send reply" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Your messages to the team" })).toBeNull();
+    expect(listMessages).toHaveBeenCalledWith([]);
+  });
+
+  it("shows an investor every request they sent about the idea, each with its own replies", async () => {
+    getCurrentUser.mockResolvedValue({ id: investorId });
+    const second = { ...request, id: "00000000-0000-4000-8000-000000000009", message: "Second try." };
+    listMyContactRequests.mockResolvedValue([second, request]);
+    listMessages.mockResolvedValue([{ ...reply(idea.author_id, "Only on the first."), request_id: request.id }]);
+
+    await renderPage();
+
+    // Only the requests themselves: the replies inside them are lists of their own.
+    const items = Array.from((await screen.findByRole("list", { name: "Your requests" })).children) as HTMLElement[];
+    expect(items).toHaveLength(2);
+    expect(within(items[0]).queryByText("Only on the first.")).toBeNull();
+    expect(within(items[1]).getByText("Only on the first.")).toBeTruthy();
+    expect(listMessages).toHaveBeenCalledWith([second.id, request.id]);
+  });
 });
