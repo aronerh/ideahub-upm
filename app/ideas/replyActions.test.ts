@@ -165,4 +165,52 @@ describe("replyToRequest", () => {
 
     expect(notifyReply).not.toHaveBeenCalled();
   });
+
+  // IH-107: edge cases.
+  it("keeps the line breaks inside a reply when it saves it", async () => {
+    await replyToRequest({}, formWith({ request_id: requestId, body: "Hi,\n\nMonday works." }));
+
+    expect(insert).toHaveBeenCalledWith({ request_id: requestId, body: "Hi,\n\nMonday works." });
+  });
+
+  it("accepts a reply of exactly 1000 characters", async () => {
+    const state = await replyToRequest({}, formWith({ request_id: requestId, body: "a".repeat(1000) }));
+
+    expect(state).toEqual({ sent: true });
+  });
+
+  it("says the reply couldn't be sent, and emails nobody, when the request id is missing", async () => {
+    // Without a request id the database refuses the insert (RLS or a bad id).
+    insertError = { message: "invalid input syntax for type uuid" };
+
+    const state = await replyToRequest({}, formWith({ body: "Hi" }));
+
+    expect(state).toEqual({ body: "Hi", formError: "Your reply couldn’t be sent. Try again in a moment." });
+    expect(insert).toHaveBeenCalledWith({ request_id: "", body: "Hi" });
+    expect(notifyReply).not.toHaveBeenCalled();
+  });
+
+  it("doesn't email anyone for a visitor's reply", async () => {
+    vi.mocked(getCurrentUser).mockResolvedValue(null);
+
+    await expect(replyToRequest({}, formWith({ request_id: requestId, body: "Hi" }))).rejects.toThrow();
+    expect(notifyReply).not.toHaveBeenCalled();
+  });
+
+  it("sends the email after saving, never before", async () => {
+    const order: string[] = [];
+    insert.mockImplementation(async () => {
+      order.push("saved");
+      return { error: null };
+    });
+    vi.mocked(notifyReply).mockImplementation(async () => {
+      order.push("emailed");
+      return "sent";
+    });
+    refresh.mockImplementation(() => order.push("refreshed"));
+
+    await replyToRequest({}, formWith({ request_id: requestId, body: "Hi" }));
+
+    expect(order).toEqual(["saved", "emailed", "refreshed"]);
+  });
 });

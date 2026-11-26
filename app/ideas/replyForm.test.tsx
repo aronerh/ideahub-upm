@@ -44,4 +44,22 @@ describe("ReplyForm", () => {
 
     expect((await screen.findByRole("alert")).textContent).toBe("Your reply couldn’t be sent. Try again in a moment.");
   });
+
+  it("shows no error before anything is sent", () => {
+    render(<ReplyForm requestId="request-1" />);
+
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.getByLabelText("Your reply").getAttribute("aria-invalid")).toBe("false");
+  });
+
+  it("disables the button and says it is sending while the reply is on its way", async () => {
+    vi.mocked(replyToRequest).mockReturnValue(new Promise(() => {}));
+    render(<ReplyForm requestId="request-1" />);
+
+    fireEvent.change(screen.getByLabelText("Your reply"), { target: { value: "Hi" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send reply" }));
+
+    const button = await screen.findByRole("button", { name: "Sending…" });
+    expect(button).toHaveProperty("disabled", true);
+  });
 });
